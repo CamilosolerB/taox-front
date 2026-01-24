@@ -4,7 +4,7 @@ import { LucideIcon, EyeOff, EyeIcon } from "lucide-react";
 import { useState } from "react";
 
 interface InputProps {
-  label: string;
+  label?: string;
   placeholder: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
