@@ -45,21 +45,21 @@ export const Sidebar = ({ children }: SidebarProps) => {
           </p>
           <a
             className="flex items-center space-x-3 px-3 py-2 bg-primary/10 text-primary rounded-lg font-medium"
-            href="#"
+            href="/company/dashboard"
           >
             <LayoutDashboard className="w-5 h-5" />
             <span>Dashboard</span>
           </a>
           <a
             className="flex items-center space-x-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-all rounded-lg"
-            href="#"
+            href="/company/inventory"
           >
             <Archive className="w-5 h-5" />
             <span>Inventario</span>
           </a>
           <a
             className="flex items-center space-x-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-all rounded-lg"
-            href="#"
+            href="/company/movements"
           >
             <History className="w-5 h-5" />
             <span>Movimientos</span>
@@ -69,21 +69,21 @@ export const Sidebar = ({ children }: SidebarProps) => {
           </p>
           <a
             className="flex items-center space-x-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-all rounded-lg"
-            href="#"
+            href="/company/providers"
           >
             <Truck className="w-5 h-5" />
             <span>Proveedores</span>
           </a>
           <a
             className="flex items-center space-x-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-all rounded-lg"
-            href="#"
+            href="/company/locations"
           >
             <MapPin className="w-5 h-5" />
             <span>Ubicaciones</span>
           </a>
           <a
             className="flex items-center space-x-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-all rounded-lg"
-            href="#"
+            href="/company/users"
           >
             <Users className="w-5 h-5" />
             <span>Usuarios &amp; Roles</span>
