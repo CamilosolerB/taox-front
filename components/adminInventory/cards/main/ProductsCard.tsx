@@ -1,7 +1,47 @@
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
 import { Download, Filter } from "lucide-react";
 import { ProductsTable } from "../../tables/main";
-import { products } from "@/interfaces/product";
-export const ProductsCard = () => {
+import { Pagination } from "@/components/utils";
+import { useInventory } from "@/hooks";
+
+const COMPANY_ID = "b27ce798-2a16-47fa-89c4-0b7f8e46cda0";
+const ITEMS_PER_PAGE = 10;
+
+interface ProductsCardProps {
+  searchFilter?: string;
+}
+
+export const ProductsCard = ({ searchFilter = "" }: ProductsCardProps) => {
+  const { useGetProducts } = useInventory(COMPANY_ID);
+  const { data: products = [], isLoading } = useGetProducts();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Filtrar productos según búsqueda
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const searchLower = searchFilter.toLowerCase();
+      return (
+        product.id_product.toLowerCase().includes(searchLower) ||
+        product.name.toLowerCase().includes(searchLower) ||
+        product.generic_name.toLowerCase().includes(searchLower)
+      );
+    });
+  }, [products, searchFilter]);
+
+  // Calcular productos para la página actual
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
+
+  // Resetear a página 1 cuando cambia el filtro
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchFilter]);
+
     return(
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
           <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -19,25 +59,25 @@ export const ProductsCard = () => {
               </button>
             </div>
           </div>
-          <ProductsTable products={products} />
-          <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <span className="text-sm text-slate-500">
-              Mostrando 4 de 1,284 productos
-            </span>
-            <div className="flex items-center space-x-2">
-              <button className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50">
-                Anterior
-              </button>
-              <button className="px-3 py-1 bg-primary text-white border border-primary rounded-md text-sm">
-                1
-              </button>
-              <button className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm hover:bg-slate-50 dark:hover:bg-slate-800">
-                2
-              </button>
-              <button className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm hover:bg-slate-50 dark:hover:bg-slate-800">
-                Siguiente
-              </button>
+          {isLoading ? (
+            <div className="p-6 text-center text-slate-500">
+              Cargando productos...
             </div>
+          ) : products.length === 0 ? (
+            <div className="p-6 text-center text-slate-500">
+              No hay productos disponibles
+            </div>
+          ) : (
+            <ProductsTable products={paginatedProducts} companyId={COMPANY_ID} />
+          )}
+          <div className="p-6 border-t border-slate-200 dark:border-slate-800">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredProducts.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setCurrentPage}
+              showInfo={true}
+            />
           </div>
         </div>
     )

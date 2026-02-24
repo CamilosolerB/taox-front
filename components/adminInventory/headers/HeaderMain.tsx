@@ -1,10 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Input, PrimaryButton } from "@/components/utils";
 import { Search } from "lucide-react";
 
-export const HeaderMain = () => {
-  const [search, setSearch] = useState<string>("");
+interface HeaderMainProps {
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onNewProductClick?: () => void;
+}
+
+export const HeaderMain = ({
+  searchValue = "",
+  onSearchChange,
+  onNewProductClick,
+}: HeaderMainProps) => {
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      onSearchChange?.(value);
+    },
+    [onSearchChange]
+  );
+
   return (
     <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
       <div>
@@ -19,13 +35,15 @@ export const HeaderMain = () => {
       <div className="flex items-center space-x-3">
         <div className="relative group">
           <Input
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Buscar producto..."
             icon={Search}
-            value={search}
+            value={searchValue}
           />
         </div>
-        <PrimaryButton type="button">Nuevo movimiento</PrimaryButton>
+        <PrimaryButton type="button" onClick={onNewProductClick}>
+          Nuevo producto
+        </PrimaryButton>
       </div>
     </header>
   );

@@ -10,6 +10,9 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   icon?: LucideIcon;
+  disabled?: boolean;
+  step?: string;
+  required?: boolean;
 }
 
 export const Input = ({
@@ -19,6 +22,9 @@ export const Input = ({
   onChange,
   type = "text",
   icon: Icon,
+  disabled = false,
+  step,
+  required = false,
 }: InputProps) => {
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -46,11 +52,15 @@ export const Input = ({
             className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg
               text-[#111418] dark:text-white dark:bg-slate-800 border border-[#dbe0e6]
               dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary
-              h-12 placeholder:text-[#617589] pl-12 pr-12 text-base font-normal leading-normal"
+              h-12 placeholder:text-[#617589] pl-2 pr-2 text-base font-normal leading-normal
+              disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed dark:disabled:bg-slate-700/50"
             placeholder={placeholder}
             value={value}
             onChange={onChange}
             type={inputType}
+            disabled={disabled}
+            step={step}
+            required={required}
           />
 
           {type === "password" && (
