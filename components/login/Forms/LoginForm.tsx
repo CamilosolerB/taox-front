@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input, PrimaryButton } from "@/components/utils";
-import { Key, User, AlertCircle } from "lucide-react";
-import { useAuth } from "@/providers/AuthProvider";
+import { Key, User } from "lucide-react";
+import { useAuthHook } from "@/hooks";
 
 interface LoginFormState {
   email: string;
@@ -13,51 +13,38 @@ interface LoginFormState {
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { loginMutation } = useAuthHook();
   const [formState, setFormState] = useState<LoginFormState>({
     email: "",
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError(null);
-      setIsLoading(true);
-
-      try {
-        await login(formState.email.trim(), formState.password);
-        // El login fue exitoso, redirigir al dashboard
-        router.push("/company/dashboard");
-      } catch (err) {
-        // Extraer mensaje de error del backend o genérico
-        const errorMessage =
-          (err as { response?: { data?: { detail?: string; message?: string } } })
-            ?.response?.data?.detail ||
-          (err as { response?: { data?: { detail?: string; message?: string } } })
-            ?.response?.data?.message ||
-          (err as Error)?.message ||
-          "Error al iniciar sesión. Verifica tus credenciales.";
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [formState, login, router]
-  );
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      await loginMutation.mutateAsync({
+        email: formState.email.trim(),
+        password: formState.password,
+      });
+      router.push("/company/dashboard");
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { error?: string }; status?: number } })
+          ?.response?.data?.error ||
+        (err as Error)?.message ||
+        "Error al iniciar sesión";
+      setError(message);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} noValidate>
       {error && (
-        <div
-          className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3"
-          role="alert"
-        >
-          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-        </div>
+        <p className="text-sm text-red-500 dark:text-red-400 mb-3" role="alert">
+          {error}
+        </p>
       )}
       <Input
         label="Correo electrónico"
@@ -67,7 +54,6 @@ export const LoginForm = () => {
         onChange={(e) =>
           setFormState((prev) => ({ ...prev, email: e.target.value }))
         }
-        disabled={isLoading}
         icon={User}
       />
       <Input
@@ -78,7 +64,6 @@ export const LoginForm = () => {
         onChange={(e) =>
           setFormState((prev) => ({ ...prev, password: e.target.value }))
         }
-        disabled={isLoading}
         icon={Key}
       />
       <div className="flex flex-col gap-2">
@@ -91,8 +76,8 @@ export const LoginForm = () => {
           </a>
         </div>
       </div>
-      <PrimaryButton type="submit" disabled={isLoading}>
-        {isLoading ? "Ingresando…" : "Ingresar"}
+      <PrimaryButton type="submit" disabled={loginMutation.isPending}>
+        {loginMutation.isPending ? "Ingresando…" : "Ingresar"}
       </PrimaryButton>
     </form>
   );

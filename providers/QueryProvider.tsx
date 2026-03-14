@@ -17,6 +17,16 @@ const queryClient = new QueryClient({
   },
 });
 
+declare global {
+  interface Window {
+    __TANSTACK_QUERY_CLIENT__: import("@tanstack/react-core").QueryClient
+  }
+}
+
+if (process.env.NODE_ENV === 'development') {
+  window.__TANSTACK_QUERY_CLIENT__ = queryClient;
+}
+
 /**
  * Proveedor de React Query
  * 

@@ -1,6 +1,11 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  createMovement as createMovementApi, 
+  getAllMovements 
+} from "@/api/endpoints/movements";
+import { ProductMovementCreateDTO, ProductMovementResponseDTO } from "@/interfaces/types";
 
 /**
  * Movimientos: la TAOX API actual no expone endpoints de movimientos.
@@ -12,10 +17,15 @@ const MOVEMENTS_QUERY_KEY = ["movements"];
 export function useMovements(_companyId: string | null) {
   const queryClient = useQueryClient();
 
-  const useGetMovements = (_page?: number, _limit?: number) => {
+  const useGetMovements = () => {
     return useQuery({
-      queryKey: [...MOVEMENTS_QUERY_KEY, "list"],
-      queryFn: async () => ({ data: [], total: 0, page: 1, limit: 10 }),
+      queryKey: [...MOVEMENTS_QUERY_KEY, "list", _companyId],
+      queryFn: async () => {
+        if (!_companyId) return { data: [] as ProductMovementResponseDTO[], total: 0 };
+        const data = await getAllMovements(_companyId);
+        return { data, total: data.length };
+      },
+      enabled: !!_companyId,
       staleTime: 1000 * 60 * 2,
     });
   };
@@ -40,8 +50,8 @@ export function useMovements(_companyId: string | null) {
 
   const useCreateMovement = () => {
     return useMutation({
-      mutationFn: async (_body: unknown) => {
-        throw new Error("API de movimientos no disponible");
+      mutationFn: async (body: ProductMovementCreateDTO) => {
+        return await createMovementApi(body);
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: MOVEMENTS_QUERY_KEY });

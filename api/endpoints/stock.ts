@@ -73,6 +73,7 @@ export async function getStockWarehouse(companyId: string): Promise<StockWarehou
 export async function createStockWarehouse(
   body: StockWarehouseCreateDTO
 ): Promise<StockWarehouseDTO> {
+  console.log(body);
   const { data } = await waterApi.post<StockWarehouseDTO>("/stock-warehouse", body);
   return data;
 }

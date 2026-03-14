@@ -14,10 +14,10 @@ import { useInventory } from "@/hooks";
 
 export default function InventoryExample() {
   const { useGetProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } =
-    useInventory();
+    useInventory("company-id-placeholder");
 
   // Obtener lista de productos
-  const { data: productsData, isLoading, error } = useGetProducts(1, 10);
+  const { data: productsData, isLoading, error } = useGetProducts();
 
   // Mutation para crear
   const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
@@ -32,10 +32,16 @@ export default function InventoryExample() {
   const handleCreate = () => {
     createProduct(
       {
-        nombre: "Nuevo Producto",
-        nombre_generico: "Genérico",
-        total_inventario: 100,
-        ubicacion: "Bodega A",
+        id_product: "PROD-001",
+        name: "Nuevo Producto",
+        generic_name: "Genérico",
+        price: 100,
+        unit_measure: "L",
+        unit_price: 10,
+        min_unit_price: 5,
+        lead_time_days: 3,
+        restorage: "Standard",
+        company_id: "company-id-placeholder",
       },
       {
         onSuccess: () => {
@@ -49,28 +55,40 @@ export default function InventoryExample() {
   };
 
   // Ejemplo: Actualizar un producto
-  const handleUpdate = (codigo: string) => {
+  const handleUpdate = (productId: string) => {
     updateProduct(
       {
-        codigo,
-        product: {
-          total_inventario: 150,
-          ubicacion: "Bodega B",
+        productId,
+        body: {
+          name: "Producto Actualizado",
+          generic_name: "Genérico Actualizado",
+          price: 150,
+          unit_measure: "L",
+          unit_price: 15,
+          min_unit_price: 7,
+          lead_time_days: 5,
+          restorage: "Standard",
         },
       },
       {
         onSuccess: () => {
-          console.log("Producto actualizado");
+          console.log("Producto actualizado exitosamente");
+        },
+        onError: (error) => {
+          console.error("Error al actualizar:", error);
         },
       }
     );
   };
 
   // Ejemplo: Eliminar un producto
-  const handleDelete = (codigo: string) => {
-    deleteProduct(codigo, {
+  const handleDelete = (id: string) => {
+    deleteProduct(id, {
       onSuccess: () => {
         console.log("Producto eliminado");
+      },
+      onError: (error) => {
+        console.error("Error al eliminar:", error);
       },
     });
   };
@@ -93,22 +111,22 @@ export default function InventoryExample() {
 
       {/* Lista de productos */}
       <div className="grid gap-4">
-        {productsData?.data.map((product) => (
-          <div key={product.codigo_producto} className="border p-4 rounded">
-            <h3 className="font-bold">{product.nombre}</h3>
-            <p>Stock: {product.total_inventario}</p>
-            <p>Ubicación: {product.ubicacion}</p>
+        {productsData?.map((product) => (
+          <div key={product.id_product} className="border p-4 rounded">
+            <h3 className="font-bold">{product.name}</h3>
+            <p>Precio: ${product.price}</p>
+            <p>Unidad: {product.unit_measure}</p>
 
             <div className="mt-2 gap-2 flex">
               <button
-                onClick={() => handleUpdate(product.codigo_producto)}
+                onClick={() => handleUpdate(product.id_product)}
                 disabled={isUpdating}
                 className="px-3 py-1 bg-green-500 text-white rounded text-sm"
               >
                 {isUpdating ? "Actualizando..." : "Actualizar"}
               </button>
               <button
-                onClick={() => handleDelete(product.codigo_producto)}
+                onClick={() => handleDelete(product.id_product)}
                 disabled={isDeleting}
                 className="px-3 py-1 bg-red-500 text-white rounded text-sm"
               >

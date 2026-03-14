@@ -255,7 +255,7 @@ export interface StockLocationUpdateDTO {
 
 export interface StockWarehouseDTO {
   codigo_producto: string;
-  cantidad: number;
+  cantidad: string;
   company_id: string;
 }
 

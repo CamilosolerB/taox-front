@@ -1,12 +1,13 @@
 'use client';
 
-import { Download, FileText } from 'lucide-react';
+import { Download, FileText, Plus } from 'lucide-react';
 
 export interface MovementsPageHeaderProps {
   title?: string;
   description?: string;
   onExportExcel?: () => void;
   onExportPdf?: () => void;
+  onRegisterMovement?: () => void;
 }
 
 export const MovementsPageHeader = ({
@@ -14,6 +15,7 @@ export const MovementsPageHeader = ({
   description = 'Pista de auditoría y análisis del flujo de inventario para Planta Alfa.',
   onExportExcel,
   onExportPdf,
+  onRegisterMovement,
 }: MovementsPageHeaderProps) => {
   return (
     <div className="flex flex-wrap justify-between items-end gap-4 mb-8">
@@ -24,6 +26,14 @@ export const MovementsPageHeader = ({
         <p className="text-[#617589] text-base">{description}</p>
       </div>
       <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={onRegisterMovement}
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:opacity-90 transition-all shadow-sm"
+        >
+          <Plus className="w-5 h-5" />
+          Registrar Movimiento
+        </button>
         <button
           type="button"
           onClick={onExportExcel}

@@ -78,9 +78,9 @@ const CompanyProviderPage = () => {
   };
 
   if (!companyId) {
-    return (
-      <Sidebar>
-        <main className="flex-1 overflow-y-auto flex flex-col">
+  return (
+    <Sidebar>
+      <main className="flex-1 overflow-y-auto flex flex-col">
           <div className="p-8 flex items-center justify-center">
             <p className="text-slate-500">Inicia sesión para ver proveedores.</p>
           </div>
@@ -127,9 +127,9 @@ const CompanyProviderPage = () => {
       value: '12 Proveedores',
       description: (
         <p className="text-green-600 dark:text-green-400 flex items-center gap-1">
-          <TrendingUp className="w-4 h-4 text-xs" />
-          +2 añadidos este mes
-        </p>
+                <TrendingUp className="w-4 h-4 text-xs" />
+                +2 añadidos este mes
+              </p>
       ),
     },
     {
@@ -138,9 +138,9 @@ const CompanyProviderPage = () => {
       value: '18 Activos',
       description: (
         <p className="text-[#617589] dark:text-gray-400 flex items-center gap-1">
-          <Calendar className="w-4 h-4 text-xs" />
-          4 expirando en 30 días
-        </p>
+                <Calendar className="w-4 h-4 text-xs" />
+                4 expirando en 30 días
+              </p>
       ),
     },
     {
@@ -149,7 +149,7 @@ const CompanyProviderPage = () => {
       value: '6 Ciudades',
       description: (
         <p className="text-[#617589] dark:text-gray-400 flex items-center gap-1">
-          <Map className="w-4 h-4 text-xs" />
+                <Map className="w-4 h-4 text-xs" />
           En Texas & Nuevo México
         </p>
       ),

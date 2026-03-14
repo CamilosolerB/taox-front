@@ -15,3 +15,5 @@ export type {
   MovementItem,
   MovementsPaginationProps,
 } from './tables';
+export { NewMovementModal } from './modals';
+export type { NewMovementModalProps } from './modals';

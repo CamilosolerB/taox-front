@@ -1,6 +1,12 @@
 import { PieChart, Layers, AlertTriangle } from 'lucide-react';
 import type { LocationItem } from '@/components/adminInventory/locations';
-import type { Tank } from '@/components/adminInventory/locations';
+
+interface Tank {
+  id: string;
+  percentage: number;
+  name: string;
+  description: string;
+}
 
 export const breadcrumbItems = [
   { label: 'Main Plant', href: '#' },

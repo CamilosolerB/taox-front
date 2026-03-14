@@ -6,46 +6,32 @@ import { useMovements } from "@/hooks";
  * EJEMPLO DE USO - useMovements
  * 
  * Este componente muestra cómo usar el hook useMovements para:
- * - Obtener lista de movimientos
  * - Obtener movimientos por producto
  * - Crear un movimiento
- * - Actualizar un movimiento
- * - Eliminar un movimiento
  */
 
 export default function MovementsExample() {
   const {
-    useGetMovements,
     useGetMovementsByProduct,
     useCreateMovement,
-    useUpdateMovement,
-    useDeleteMovement,
-  } = useMovements();
+  } = useMovements("company-id-placeholder");
 
-  // Obtener lista de movimientos
-  const { data: movementsData, isLoading } = useGetMovements(1, 10);
+  // Obtener movimientos por producto (como ejemplo)
+  const { data: movementsByProductData, isLoading } = useGetMovementsByProduct("PROD001");
 
   // Mutation para crear
   const { mutate: createMovement, isPending: isCreating } = useCreateMovement();
 
-  // Mutation para actualizar
-  const { mutate: updateMovement, isPending: isUpdating } = useUpdateMovement();
-
-  // Mutation para eliminar
-  const { mutate: deleteMovement, isPending: isDeleting } = useDeleteMovement();
-
-  // Ejemplo: Crear un movimiento
+  // Ejemplo: Crear un movimiento con propiedades correctas
   const handleCreateMovement = () => {
     createMovement(
       {
         codigo_producto: "A00000001",
-        tipo: "salida",
+        id_proceso_origen: 1,
+        id_proceso_destino: 2,
         cantidad: 10,
-        ubicacion_origen: "Bodega A",
-        ubicacion_destino: "Planta",
-        fecha: new Date().toISOString(),
-        descripcion: "Movimiento de prueba",
-        usuario: "admin",
+        notas: "Movimiento de prueba",
+        id_empresa: "company-id-placeholder",
       },
       {
         onSuccess: () => {
@@ -70,21 +56,19 @@ export default function MovementsExample() {
       </button>
 
       <div className="space-y-4">
-        {movementsData?.data.map((movement) => (
-          <div key={movement.id} className="border p-4 rounded">
+        {movementsByProductData?.map((movement: any) => (
+          <div key={movement.id_movimiento} className="border p-4 rounded">
             <p>
               <strong>Producto:</strong> {movement.codigo_producto}
             </p>
             <p>
-              <strong>Tipo:</strong> {movement.tipo}
-            </p>
-            <p>
               <strong>Cantidad:</strong> {movement.cantidad}
             </p>
-            <p>
-              <strong>De:</strong> {movement.ubicacion_origen} <strong>A:</strong>{" "}
-              {movement.ubicacion_destino}
-            </p>
+            {movement.notas && (
+              <p>
+                <strong>Notas:</strong> {movement.notas}
+              </p>
+            )}
           </div>
         ))}
       </div>

@@ -3,8 +3,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { Input, PrimaryButton, Modal } from "@/components/utils";
 import { useInventory } from "@/hooks";
+import { useProviders } from "@/hooks/useProviders";
+import { useStock } from "@/hooks/useStock";
 import { AlertCircle } from "lucide-react";
 import { Product } from "@/interfaces/product";
+import { ProviderSelector } from "./ProviderSelector";
 
 interface EditProductModalProps {
   isOpen: boolean;
@@ -22,6 +25,7 @@ interface FormState {
   min_unit_price: string;
   lead_time_days: string;
   restorage: string;
+  currentStockWarehouse: string;
 }
 
 export const EditProductModal = ({
@@ -33,6 +37,19 @@ export const EditProductModal = ({
   const { useUpdateProduct } = useInventory(companyId);
   const updateMutation = useUpdateProduct();
 
+  const { useGetProviders, useGetProvidersByProduct, useCreateProductProvider, useDeleteProductProvider, useSetMainProvider } = useProviders(companyId);
+  const { data: providersData, isLoading: loadingProviders } = useGetProviders();
+  const { data: productProvidersData, isLoading: loadingProductProviders } = useGetProvidersByProduct(product?.id_product || null);
+  const createProductProviderMutation = useCreateProductProvider();
+  const deleteProductProviderMutation = useDeleteProductProvider();
+  const setMainProviderMutation = useSetMainProvider();
+
+  const { useGetStockWarehouse, useCreateStockWarehouse, useIncrementStockWarehouse, useDecrementStockWarehouse } = useStock(companyId);
+  const { data: stockWarehouseData } = useGetStockWarehouse();
+  const createStockWarehouseMutation = useCreateStockWarehouse();
+  const incrementStockMutation = useIncrementStockWarehouse();
+  const decrementStockMutation = useDecrementStockWarehouse();
+
   const [formState, setFormState] = useState<FormState>({
     name: "",
     generic_name: "",
@@ -42,8 +59,11 @@ export const EditProductModal = ({
     min_unit_price: "",
     lead_time_days: "",
     restorage: "",
+    currentStockWarehouse: "",
   });
 
+  const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
+  const [mainProvider, setMainProvider] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Cargar datos del producto cuando se abre el modal
@@ -58,10 +78,32 @@ export const EditProductModal = ({
         min_unit_price: product.min_unit_price.toString(),
         lead_time_days: product.lead_time_days.toString(),
         restorage: product.restorage,
+        currentStockWarehouse: "",
       });
       setError(null);
+
+      // Cargar stock actual del almacén
+      const stock = stockWarehouseData?.find(
+        (s: any) => s.codigo_producto === product.id_product
+      );
+      if (stock) {
+        setFormState((prev) => ({
+          ...prev,
+          currentStockWarehouse: stock.cantidad.toString(),
+        }));
+      }
     }
-  }, [isOpen, product]);
+  }, [isOpen, product, stockWarehouseData]);
+
+  // Cargar proveedores del producto
+  useEffect(() => {
+    if (productProvidersData && Array.isArray(productProvidersData)) {
+      const providers = productProvidersData.map((pp: any) => pp.cad_proveedor);
+      const main = productProvidersData.find((pp: any) => pp.es_principal)?.cad_proveedor || null;
+      setSelectedProviders(providers);
+      setMainProvider(main);
+    }
+  }, [productProvidersData]);
 
   const handleInputChange = useCallback(
     (field: keyof FormState, value: string) => {
@@ -69,6 +111,65 @@ export const EditProductModal = ({
       setError(null);
     },
     []
+  );
+
+  const handleProviderChange = useCallback(
+    async (newProviders: string[]) => {
+      if (!product) return;
+
+      try {
+        const currentProviders = selectedProviders;
+        
+        // Eliminar proveedores que se deseleccionaron
+        const toRemove = currentProviders.filter((p) => !newProviders.includes(p));
+        for (const providerId of toRemove) {
+          await deleteProductProviderMutation.mutateAsync({
+            productCode: product.id_product,
+            providerId,
+          });
+        }
+
+        // Añadir nuevos proveedores
+        const toAdd = newProviders.filter((p) => !currentProviders.includes(p));
+        for (const providerId of toAdd) {
+          await createProductProviderMutation.mutateAsync({
+            codigo_producto: product.id_product,
+            cad_proveedor: providerId,
+            es_principal: false,
+          });
+        }
+
+        setSelectedProviders(newProviders);
+      } catch (err) {
+        const errorMessage = (err as Error)?.message || "Error al actualizar proveedores";
+        setError(errorMessage);
+      }
+    },
+    [product, selectedProviders, deleteProductProviderMutation, createProductProviderMutation]
+  );
+
+  const handleMainProviderChange = useCallback(
+    async (providerId: string) => {
+      if (!product) return;
+
+      try {
+        if (mainProvider === providerId) {
+          // Deseleccionar como proveedor principal (sin eliminar la relación)
+          setMainProvider(null);
+        } else {
+          // Establecer como principal
+          await setMainProviderMutation.mutateAsync({
+            productCode: product.id_product,
+            providerId,
+          });
+          setMainProvider(providerId);
+        }
+      } catch (err) {
+        const errorMessage = (err as Error)?.message || "Error al establecer proveedor principal";
+        setError(errorMessage);
+      }
+    },
+    [product, mainProvider, setMainProviderMutation]
   );
 
   const handleSubmit = useCallback(
@@ -89,6 +190,7 @@ export const EditProductModal = ({
       }
 
       try {
+        // 1. Actualizar el producto
         await updateMutation.mutateAsync({
           productId: product.id_product,
           body: {
@@ -103,25 +205,78 @@ export const EditProductModal = ({
           },
         });
 
+        // 2. Actualizar stock si la cantidad ha cambiado
+        const currentStock = stockWarehouseData?.find(
+          (s: any) => s.codigo_producto === product.id_product
+        );
+        const newStock = parseFloat(formState.currentStockWarehouse) || 0;
+        const oldStock = currentStock?.cantidad || 0;
+
+        if (newStock !== oldStock) {
+          const difference = newStock - oldStock;
+
+          if (!currentStock && newStock > 0) {
+            // Crear stock si no existe
+            await createStockWarehouseMutation.mutateAsync({
+              codigo_producto: product.id_product,
+              cantidad: newStock,
+              company_id: companyId,
+            });
+          } else if (difference > 0) {
+            // Incrementar stock
+            await incrementStockMutation.mutateAsync({
+              productCode: product.id_product,
+              quantity: difference,
+              companyId,
+            });
+          } else if (difference < 0) {
+            // Decrementar stock
+            await decrementStockMutation.mutateAsync({
+              productCode: product.id_product,
+              quantity: Math.abs(difference),
+              companyId,
+            });
+          }
+        }
+
         onClose();
       } catch (err) {
-        const errorMessage =
-          (
-            err as {
-              response?: { data?: { detail?: string; message?: string } };
+        let errorMessage = "Error al actualizar producto";
+        
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (
+          err &&
+          typeof err === "object" &&
+          "response" in err
+        ) {
+          const response = (err as { response?: { data?: unknown } }).response;
+          if (response?.data) {
+            const data = response.data;
+            if (typeof data === "string") {
+              errorMessage = data;
+            } else if (typeof data === "object" && data !== null) {
+              const objData = data as Record<string, unknown>;
+              if (objData.detail && typeof objData.detail === "string") {
+                errorMessage = objData.detail;
+              } else if (objData.message && typeof objData.message === "string") {
+                errorMessage = objData.message;
+              } else if (Array.isArray(objData)) {
+                errorMessage = objData.map((e: unknown) => {
+                  if (typeof e === "object" && e !== null && "msg" in e) {
+                    return (e as Record<string, unknown>).msg;
+                  }
+                  return JSON.stringify(e);
+                }).join(", ");
+              }
             }
-          )?.response?.data?.detail ||
-          (
-            err as {
-              response?: { data?: { detail?: string; message?: string } };
-            }
-          )?.response?.data?.message ||
-          (err as Error)?.message ||
-          "Error al actualizar producto";
+          }
+        }
+        
         setError(errorMessage);
       }
     },
-    [formState, product, updateMutation, onClose]
+    [formState, product, updateMutation, companyId, onClose, stockWarehouseData, createStockWarehouseMutation, incrementStockMutation, decrementStockMutation]
   );
 
   return (
@@ -238,6 +393,40 @@ export const EditProductModal = ({
           </div>
         </div>
 
+        {/* Stock Actual */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
+            Stock en Almacén
+          </h3>
+          <div className="grid grid-cols-1 gap-4">
+            <Input
+              label="Cantidad en Almacén"
+              type="number"
+              placeholder="0"
+              step="0.01"
+              value={formState.currentStockWarehouse}
+              onChange={(e) =>
+                handleInputChange("currentStockWarehouse", e.target.value)
+              }
+            />
+          </div>
+        </div>
+
+        {/* Proveedores */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
+            Gestionar Proveedores
+          </h3>
+          <ProviderSelector
+            providers={providersData || []}
+            selectedProviders={selectedProviders}
+            onSelectionChange={handleProviderChange}
+            mainProvider={mainProvider}
+            onMainProviderChange={handleMainProviderChange}
+            isLoading={loadingProviders || loadingProductProviders}
+          />
+        </div>
+
         {/* Botones */}
         <div className="flex gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
           <button
@@ -250,9 +439,9 @@ export const EditProductModal = ({
           <div className="flex-1">
             <PrimaryButton
               type="submit"
-              disabled={updateMutation.isPending}
+              disabled={updateMutation.isPending || incrementStockMutation.isPending || decrementStockMutation.isPending || createStockWarehouseMutation.isPending}
             >
-              {updateMutation.isPending ? "Guardando…" : "Actualizar Producto"}
+              {updateMutation.isPending || incrementStockMutation.isPending || decrementStockMutation.isPending || createStockWarehouseMutation.isPending ? "Guardando…" : "Actualizar Producto"}
             </PrimaryButton>
           </div>
         </div>

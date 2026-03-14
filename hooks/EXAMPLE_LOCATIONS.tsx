@@ -20,10 +20,10 @@ export default function LocationsExample() {
     useCreateLocation,
     useUpdateLocation,
     useDeleteLocation,
-  } = useLocations();
+  } = useLocations("company-id-placeholder");
 
   // Obtener lista de ubicaciones
-  const { data: locationsData, isLoading } = useGetLocations(1, 10);
+  const { data: locationsData, isLoading } = useGetLocations();
 
   // Mutation para crear
   const { mutate: createLocation, isPending: isCreating } =
@@ -41,10 +41,12 @@ export default function LocationsExample() {
   const handleCreateLocation = () => {
     createLocation(
       {
-        nombre: "Bodega Nueva",
-        capacidad: 1000,
-        capacidad_usada: 500,
-        descripcion: "Nueva bodega para almacenamiento",
+        ubicacion: "Bodega Nueva",
+        posicion: "A1",
+        nivel: "1",
+        tipo_ubicacion: "almacen",
+        localizador: "BDG-001",
+        company_id: "company-id-placeholder",
       },
       {
         onSuccess: () => {
@@ -55,12 +57,13 @@ export default function LocationsExample() {
   };
 
   // Ejemplo: Actualizar una ubicación
-  const handleUpdateLocation = (id: string) => {
+  const handleUpdateLocation = (id: number) => {
     updateLocation(
       {
-        id,
-        location: {
-          capacidad_usada: 650,
+        locationId: id,
+        body: {
+          ubicacion: "Bodega Actualizada",
+          posicion: "A2",
         },
       },
       {
@@ -72,12 +75,18 @@ export default function LocationsExample() {
   };
 
   // Ejemplo: Eliminar una ubicación
-  const handleDeleteLocation = (id: string) => {
-    deleteLocation(id, {
-      onSuccess: () => {
-        console.log("Ubicación eliminada");
+  const handleDeleteLocation = (id: number) => {
+    deleteLocation(
+      {
+        locationId: id,
+        companyId: "company-id-placeholder",
       },
-    });
+      {
+        onSuccess: () => {
+          console.log("Ubicación eliminada");
+        },
+      }
+    );
   };
 
   if (isLoading) return <div>Cargando ubicaciones...</div>;
@@ -95,22 +104,22 @@ export default function LocationsExample() {
       </button>
 
       <div className="grid gap-4">
-        {locationsData?.data.map((location) => (
-          <div key={location.id} className="border p-4 rounded">
-            <h3 className="font-bold">{location.nombre}</h3>
-            <p>Capacidad: {location.capacidad_usada} / {location.capacidad}</p>
-            <p className="text-sm text-gray-600">{location.descripcion}</p>
+        {locationsData?.map((location) => (
+          <div key={location.id_ubicacion} className="border p-4 rounded">
+            <h3 className="font-bold">{location.ubicacion}</h3>
+            <p>Posición: {location.posicion} | Nivel: {location.nivel}</p>
+            <p className="text-sm text-gray-600">Tipo: {location.tipo_ubicacion} | Localizador: {location.localizador}</p>
 
             <div className="mt-2 gap-2 flex">
               <button
-                onClick={() => handleUpdateLocation(location.id)}
+                onClick={() => handleUpdateLocation(location.id_ubicacion)}
                 disabled={isUpdating}
                 className="px-3 py-1 bg-green-500 text-white rounded text-sm"
               >
                 {isUpdating ? "Actualizando..." : "Actualizar"}
               </button>
               <button
-                onClick={() => handleDeleteLocation(location.id)}
+                onClick={() => handleDeleteLocation(location.id_ubicacion)}
                 disabled={isDeleting}
                 className="px-3 py-1 bg-red-500 text-white rounded text-sm"
               >

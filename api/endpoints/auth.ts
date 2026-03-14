@@ -4,7 +4,6 @@ import { setToken } from "@/lib/auth";
 
 /** POST /auth/login - Retorna TokenDTO; guarda access_token en localStorage. */
 export async function login(body: LoginDTO): Promise<TokenDTO> {
-  console.log("login", body);
   const { data } = await waterApi.post<TokenDTO>("/auth/login", body);
   setToken(data.access_token);
   return data;

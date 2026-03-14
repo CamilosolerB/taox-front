@@ -2,7 +2,8 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as providersApi from "@/api/endpoints/providers";
-import type { ProviderCreateDTO, ProviderUpdateDTO } from "@/api/types";
+import * as productProvidersApi from "@/api/endpoints/productProviders";
+import type { ProviderCreateDTO, ProviderUpdateDTO, ProductProviderCreateDTO, ProductProviderUpdateDTO } from "@/api/types";
 
 const PROVIDERS_QUERY_KEY = ["providers"];
 
@@ -72,11 +73,106 @@ export function useProviders(companyId: string | null) {
     });
   };
 
+  // Product Provider Hooks
+  const useGetProvidersByProduct = (productCode: string | null) => {
+    return useQuery({
+      queryKey: [...PROVIDERS_QUERY_KEY, "by-product", productCode],
+      queryFn: () =>
+        productCode ? productProvidersApi.getProvidersByProduct(productCode) : Promise.resolve([]),
+      enabled: !!productCode,
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+
+  const useGetProductsByProvider = (providerId: string | null) => {
+    return useQuery({
+      queryKey: [...PROVIDERS_QUERY_KEY, "by-provider", providerId],
+      queryFn: () =>
+        providerId ? productProvidersApi.getProductsByProvider(providerId) : Promise.resolve([]),
+      enabled: !!providerId,
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+
+  const useGetMainProvider = (productCode: string | null) => {
+    return useQuery({
+      queryKey: [...PROVIDERS_QUERY_KEY, "main", productCode],
+      queryFn: () =>
+        productCode ? productProvidersApi.getMainProvider(productCode) : null,
+      enabled: !!productCode,
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+
+  const useCreateProductProvider = () => {
+    return useMutation({
+      mutationFn: (body: ProductProviderCreateDTO) =>
+        productProvidersApi.createProductProvider(body),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: PROVIDERS_QUERY_KEY });
+      },
+    });
+  };
+
+  const useUpdateProductProvider = () => {
+    return useMutation({
+      mutationFn: ({
+        productCode,
+        providerId,
+        body,
+      }: {
+        productCode: string;
+        providerId: string;
+        body: ProductProviderUpdateDTO;
+      }) => productProvidersApi.updateProductProvider(productCode, providerId, body),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: PROVIDERS_QUERY_KEY });
+      },
+    });
+  };
+
+  const useDeleteProductProvider = () => {
+    return useMutation({
+      mutationFn: ({
+        productCode,
+        providerId,
+      }: {
+        productCode: string;
+        providerId: string;
+      }) => productProvidersApi.deleteProductProvider(productCode, providerId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: PROVIDERS_QUERY_KEY });
+      },
+    });
+  };
+
+  const useSetMainProvider = () => {
+    return useMutation({
+      mutationFn: ({
+        productCode,
+        providerId,
+      }: {
+        productCode: string;
+        providerId: string;
+      }) => productProvidersApi.setMainProvider(productCode, providerId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: PROVIDERS_QUERY_KEY });
+      },
+    });
+  };
+
   return {
     useGetProviders,
     useGetProvider,
     useCreateProvider,
     useUpdateProvider,
     useDeleteProvider,
+    useGetProvidersByProduct,
+    useGetProductsByProvider,
+    useGetMainProvider,
+    useCreateProductProvider,
+    useUpdateProductProvider,
+    useDeleteProductProvider,
+    useSetMainProvider,
   };
 }

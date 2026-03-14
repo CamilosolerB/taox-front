@@ -1,2 +1,2 @@
-export { Product } from "./product";
-export type { Movement, Location, User, Provider } from "./types";
+export type { Product } from "./product";
+export type { Movement, Location, User, ProviderDTO } from "./types";

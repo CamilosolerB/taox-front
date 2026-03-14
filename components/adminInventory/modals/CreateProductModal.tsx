@@ -4,7 +4,10 @@ import { useState, useCallback } from "react";
 import { Input, PrimaryButton } from "@/components/utils";
 import { Modal } from "@/components/utils/Modal";
 import { useInventory } from "@/hooks";
+import { useProviders } from "@/hooks/useProviders";
+import { useStock } from "@/hooks/useStock";
 import { AlertCircle } from "lucide-react";
+import { ProviderSelector } from "./ProviderSelector";
 
 interface CreateProductModalProps {
   isOpen: boolean;
@@ -22,6 +25,7 @@ interface FormState {
   min_unit_price: string;
   lead_time_days: string;
   restorage: string;
+  initialStockWarehouse: string;
 }
 
 const generateProductId = () => {
@@ -39,6 +43,14 @@ export const CreateProductModal = ({
 }: CreateProductModalProps) => {
   const { useCreateProduct } = useInventory(companyId);
   const createMutation = useCreateProduct();
+  
+  const { useGetProviders } = useProviders(companyId);
+  const { data: providersData, isLoading: loadingProviders } = useGetProviders();
+  const { useCreateProductProvider } = useProviders(companyId);
+  const createProductProviderMutation = useCreateProductProvider();
+
+  const { useCreateStockWarehouse } = useStock(companyId);
+  const createStockWarehouseMutation = useCreateStockWarehouse();
 
   const [formState, setFormState] = useState<FormState>({
     id_product: generateProductId(),
@@ -50,8 +62,11 @@ export const CreateProductModal = ({
     min_unit_price: "",
     lead_time_days: "",
     restorage: "",
+    initialStockWarehouse: "",
   });
 
+  const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
+  const [mainProvider, setMainProvider] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = useCallback(
@@ -78,6 +93,7 @@ export const CreateProductModal = ({
       }
 
       try {
+        // 1. Crear el producto
         await createMutation.mutateAsync({
           id_product: formState.id_product,
           name: formState.name,
@@ -90,6 +106,25 @@ export const CreateProductModal = ({
           restorage: formState.restorage || "",
           company_id: companyId,
         });
+        const initialStock = parseFloat(formState.initialStockWarehouse) || 0;
+        if (initialStock > 0) {
+          await createStockWarehouseMutation.mutateAsync({
+            codigo_producto: formState.id_product,
+            cantidad: initialStock,
+            company_id: companyId,
+          });
+        }
+
+        // 3. Crear relaciones con proveedores si hay seleccionados
+        if (selectedProviders.length > 0) {
+          for (const providerId of selectedProviders) {
+            await createProductProviderMutation.mutateAsync({
+              codigo_producto: formState.id_product,
+              cad_proveedor: providerId,
+              es_principal: mainProvider === providerId,
+            });
+          }
+        }
 
         // Reset form y cerrar
         setFormState({
@@ -102,26 +137,48 @@ export const CreateProductModal = ({
           min_unit_price: "",
           lead_time_days: "",
           restorage: "",
+          initialStockWarehouse: "",
         });
+        setSelectedProviders([]);
+        setMainProvider(null);
         onClose();
       } catch (err) {
-        const errorMessage =
-          (
-            err as {
-              response?: { data?: { detail?: string; message?: string } };
+        let errorMessage = "Error al crear producto";
+        
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (
+          err &&
+          typeof err === "object" &&
+          "response" in err
+        ) {
+          const response = (err as { response?: { data?: unknown } }).response;
+          if (response?.data) {
+            const data = response.data;
+            if (typeof data === "string") {
+              errorMessage = data;
+            } else if (typeof data === "object" && data !== null) {
+              const objData = data as Record<string, unknown>;
+              if (objData.detail && typeof objData.detail === "string") {
+                errorMessage = objData.detail;
+              } else if (objData.message && typeof objData.message === "string") {
+                errorMessage = objData.message;
+              } else if (Array.isArray(objData)) {
+                errorMessage = objData.map((e: unknown) => {
+                  if (typeof e === "object" && e !== null && "msg" in e) {
+                    return (e as Record<string, unknown>).msg;
+                  }
+                  return JSON.stringify(e);
+                }).join(", ");
+              }
             }
-          )?.response?.data?.detail ||
-          (
-            err as {
-              response?: { data?: { detail?: string; message?: string } };
-            }
-          )?.response?.data?.message ||
-          (err as Error)?.message ||
-          "Error al crear producto";
+          }
+        }
+        
         setError(errorMessage);
       }
     },
-    [formState, createMutation, companyId, onClose]
+    [formState, createMutation, createProductProviderMutation, createStockWarehouseMutation, companyId, onClose, selectedProviders, mainProvider]
   );
 
   const handleGenerateNewId = useCallback(() => {
@@ -260,6 +317,40 @@ export const CreateProductModal = ({
           </div>
         </div>
 
+        {/* Stock Inicial */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
+            Stock Inicial (Opcional)
+          </h3>
+          <div className="grid grid-cols-1 gap-4">
+            <Input
+              label="Cantidad en Almacén"
+              type="number"
+              placeholder="0"
+              step="0.01"
+              value={formState.initialStockWarehouse}
+              onChange={(e) =>
+                handleInputChange("initialStockWarehouse", e.target.value)
+              }
+            />
+          </div>
+        </div>
+
+        {/* Proveedores */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
+            Relacionar Proveedores (Opcional)
+          </h3>
+          <ProviderSelector
+            providers={providersData || []}
+            selectedProviders={selectedProviders}
+            onSelectionChange={setSelectedProviders}
+            mainProvider={mainProvider}
+            onMainProviderChange={setMainProvider}
+            isLoading={loadingProviders}
+          />
+        </div>
+
         {/* Botones */}
         <div className="flex gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
           <button
@@ -272,9 +363,9 @@ export const CreateProductModal = ({
           <div className="flex-1">
             <PrimaryButton
               type="submit"
-              disabled={createMutation.isPending}
+              disabled={createMutation.isPending || createProductProviderMutation.isPending || createStockWarehouseMutation.isPending}
             >
-              {createMutation.isPending ? "Guardando…" : "Guardar Producto"}
+              {createMutation.isPending || createProductProviderMutation.isPending || createStockWarehouseMutation.isPending ? "Guardando…" : "Guardar Producto"}
             </PrimaryButton>
           </div>
         </div>

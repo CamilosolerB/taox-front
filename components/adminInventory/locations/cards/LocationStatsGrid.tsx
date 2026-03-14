@@ -50,7 +50,7 @@ export const LocationStatsGrid = ({
       <LocationStatsCard
         icon={alertsIcon}
         label="Alertas de Stock Bajo"
-        value={lowStockAlerts}
+        value={`${lowStockAlerts} Alertas`}
         description="Requiere reorden inmediata"
       />
     </div>

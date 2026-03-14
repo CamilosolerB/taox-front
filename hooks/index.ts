@@ -16,6 +16,7 @@ export { useProviders } from "./useProviders";
 export { useRoles } from "./useRoles";
 export { useClients } from "./useClients";
 export { useStock } from "./useStock";
+export { useAlerts } from "./useAlerts";
 
 export { useAuth } from "@/providers/AuthProvider";
 export { useInventoryStore } from "@/providers/InventoryProvider";
