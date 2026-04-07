@@ -19,6 +19,7 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
   const [destinationProcessId, setDestinationProcessId] = useState<string | number>('');
   const [quantity, setQuantity] = useState('');
   const [notes, setNotes] = useState('');
+  const [tipoMovimiento, setTipoMovimiento] = useState('traslado');
 
   const { useCreateMovement } = useMovements(companyId);
   const { mutate: createMovement, isPending } = useCreateMovement();
@@ -52,8 +53,19 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!productId || !originProcessId || !destinationProcessId || !quantity) {
+    // Validar condicionalmente según el tipo
+    if (!productId || !quantity) {
       alert('Por favor complete todos los campos requeridos');
+      return;
+    }
+    
+    if (tipoMovimiento !== 'entrada' && !originProcessId) {
+      alert('Por favor seleccione un proceso de origen');
+      return;
+    }
+    
+    if (tipoMovimiento !== 'salida' && !destinationProcessId) {
+      alert('Por favor seleccione un proceso de destino');
       return;
     }
 
@@ -66,8 +78,9 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
     createMovement(
       {
         codigo_producto: String(selectedProduct.id_product),
-        id_proceso_origen: String(originProcessId),
-        id_proceso_destino: String(destinationProcessId),
+        id_proceso_origen: tipoMovimiento === 'entrada' ? String(destinationProcessId) : String(originProcessId),
+        id_proceso_destino: tipoMovimiento === 'salida' ? String(originProcessId) : String(destinationProcessId),
+        tipo_movimiento: tipoMovimiento,
         cantidad: parseFloat(quantity),
         notas: notes || null,
         id_empresa: companyId,
@@ -80,6 +93,7 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
           setProductId('');
           setOriginProcessId('');
           setDestinationProcessId('');
+          setTipoMovimiento('traslado');
           setQuantity('');
           setNotes('');
         },
@@ -114,25 +128,45 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
             required={true}
           />
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tipo de Movimiento *
+            </label>
+            <select
+              required
+              value={tipoMovimiento}
+              onChange={(e) => setTipoMovimiento(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 bg-white dark:bg-gray-900"
+            >
+              <option value="traslado">Traslado (Origen -&gt; Destino)</option>
+              <option value="entrada">Entrada (Solo Destino)</option>
+              <option value="salida">Salida (Solo Origen)</option>
+            </select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
-            <SearchSelect
-              label="Proceso Origen"
-              placeholder="Selecciona proceso..."
-              options={processOptions}
-              value={originProcessId}
-              onChange={setOriginProcessId}
-              isLoading={isLoadingProcesses}
-              required={true}
-            />
-            <SearchSelect
-              label="Proceso Destino"
-              placeholder="Selecciona proceso..."
-              options={processOptions}
-              value={destinationProcessId}
-              onChange={setDestinationProcessId}
-              isLoading={isLoadingProcesses}
-              required={true}
-            />
+            <div className={tipoMovimiento === 'entrada' ? "opacity-50 pointer-events-none" : ""}>
+              <SearchSelect
+                label="Proceso Origen"
+                placeholder="Selecciona proceso..."
+                options={processOptions}
+                value={originProcessId}
+                onChange={setOriginProcessId}
+                isLoading={isLoadingProcesses}
+                required={tipoMovimiento !== 'entrada'}
+              />
+            </div>
+            <div className={tipoMovimiento === 'salida' ? "opacity-50 pointer-events-none" : ""}>
+              <SearchSelect
+                label="Proceso Destino"
+                placeholder="Selecciona proceso..."
+                options={processOptions}
+                value={destinationProcessId}
+                onChange={setDestinationProcessId}
+                isLoading={isLoadingProcesses}
+                required={tipoMovimiento !== 'salida'}
+              />
+            </div>
           </div>
 
           <div>

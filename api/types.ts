@@ -140,6 +140,7 @@ export interface ProductDTO {
   min_unit_price: number;
   lead_time_days: number;
   restorage: string;
+  limite_critico: number;
   company_id: string;
 }
 
@@ -153,6 +154,7 @@ export interface CreateProductDTO {
   min_unit_price: number;
   lead_time_days: number;
   restorage: string;
+  limite_critico: number;
   company_id: string;
 }
 
@@ -165,6 +167,7 @@ export interface UpdateProductDTO {
   min_unit_price?: number | null;
   lead_time_days?: number | null;
   restorage?: string | null;
+  limite_critico?: number | null;
 }
 
 // --- Providers ---
@@ -310,14 +313,17 @@ export interface ProductProviderDTO {
   codigo_producto: string;
   cad_proveedor: string;
   es_principal: boolean;
+  precio?: number;
 }
 
 export interface ProductProviderCreateDTO {
   codigo_producto: string;
   cad_proveedor: string;
   es_principal?: boolean;
+  precio?: number;
 }
 
 export interface ProductProviderUpdateDTO {
   es_principal?: boolean | null;
+  precio?: number | null;
 }

@@ -22,7 +22,7 @@ import { useAuth } from '@/hooks';
 import { useMovements } from '@/hooks/useMovements';
 import { useInventory } from '@/hooks/useInventory';
 import type { MovementItem } from '@/data/movementsData';
-import { ProductDTO, ProductMovementResponseDTO } from '@/interfaces/types';
+import { ProductMovementResponseDTO } from '@/interfaces/types';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -49,13 +49,12 @@ const CompanyMovementsPage = () => {
 
   // Helper to map API data to UI items
   const mappedMovements: MovementItem[] = movements.map((m) => {
-    const product = products.find((p: ProductDTO) => p.id_product === m.codigo_producto);
+    const product = products.find((p: any) => p.id_product === m.codigo_producto);
     const dateObj = new Date(m.created_at);
     
-    // Determine type label (could be ENTRY or EXIT based on your logic, here assuming based on processes)
-    // For now using the raw type if available or common mapping
-    const isExit = m.id_proceso_destino === null || m.id_proceso_destino === ''; 
-    const isEntry = !isExit;
+    const typeStr = (m.tipo_movimiento || 'traslado').toUpperCase();
+    const isEntry = typeStr === 'ENTRADA';
+    const isExit = typeStr === 'SALIDA';
 
     return {
       id: String(m.id_movimiento),
@@ -64,8 +63,8 @@ const CompanyMovementsPage = () => {
       productName: product ? product.name : m.codigo_producto,
       productSku: m.codigo_producto,
       productIcon: 'beaker', // Default
-      type: isEntry ? 'ENTRY' : 'EXIT',
-      quantity: `${isEntry ? '+' : '-'}${m.cantidad} Units`, // Adjust based on unit if available
+      type: typeStr,
+      quantity: `${isEntry ? '+' : isExit ? '-' : ''}${m.cantidad} Units`,
       userInitials: 'TA', // Mocked user until API provides it
       userName: 'TAOX User',
     };

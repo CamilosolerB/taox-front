@@ -40,16 +40,19 @@ export interface ProductProviderDTO {
   codigo_producto: string;
   cad_proveedor: string;
   es_principal: boolean;
+  precio?: number;
 }
 
 export interface ProductProviderCreateDTO {
   codigo_producto: string;
   cad_proveedor: string;
   es_principal?: boolean;
+  precio?: number;
 }
 
 export interface ProductProviderUpdateDTO {
   es_principal?: boolean | null;
+  precio?: number | null;
 }
 
 // Movements
@@ -57,6 +60,7 @@ export interface ProductMovementCreateDTO {
   codigo_producto: string;
   id_proceso_origen: string;
   id_proceso_destino: string;
+  tipo_movimiento?: string;
   cantidad: number;
   notas?: string | null;
   id_empresa: string;
@@ -67,6 +71,7 @@ export interface ProductMovementResponseDTO {
   codigo_producto: string;
   id_proceso_origen: string;
   id_proceso_destino: string;
+  tipo_movimiento: string;
   cantidad: number;
   notas: string | null;
   id_empresa: string;

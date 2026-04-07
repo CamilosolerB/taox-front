@@ -25,6 +25,7 @@ interface FormState {
   min_unit_price: string;
   lead_time_days: string;
   restorage: string;
+  limite_critico: string;
   currentStockWarehouse: string;
 }
 
@@ -37,12 +38,13 @@ export const EditProductModal = ({
   const { useUpdateProduct } = useInventory(companyId);
   const updateMutation = useUpdateProduct();
 
-  const { useGetProviders, useGetProvidersByProduct, useCreateProductProvider, useDeleteProductProvider, useSetMainProvider } = useProviders(companyId);
+  const { useGetProviders, useGetProvidersByProduct, useCreateProductProvider, useDeleteProductProvider, useSetMainProvider, useUpdateProductProvider } = useProviders(companyId);
   const { data: providersData, isLoading: loadingProviders } = useGetProviders();
   const { data: productProvidersData, isLoading: loadingProductProviders } = useGetProvidersByProduct(product?.id_product || null);
   const createProductProviderMutation = useCreateProductProvider();
   const deleteProductProviderMutation = useDeleteProductProvider();
   const setMainProviderMutation = useSetMainProvider();
+  const updateProductProviderMutation = useUpdateProductProvider();
 
   const { useGetStockWarehouse, useCreateStockWarehouse, useIncrementStockWarehouse, useDecrementStockWarehouse } = useStock(companyId);
   const { data: stockWarehouseData } = useGetStockWarehouse();
@@ -59,12 +61,18 @@ export const EditProductModal = ({
     min_unit_price: "",
     lead_time_days: "",
     restorage: "",
+    limite_critico: "",
     currentStockWarehouse: "",
   });
 
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
   const [mainProvider, setMainProvider] = useState<string | null>(null);
+  const [providerPrices, setProviderPrices] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+
+  const handleProviderPriceChange = useCallback((providerId: string, price: string) => {
+    setProviderPrices((prev) => ({ ...prev, [providerId]: price }));
+  }, []);
 
   // Cargar datos del producto cuando se abre el modal
   useEffect(() => {
@@ -78,6 +86,7 @@ export const EditProductModal = ({
         min_unit_price: product.min_unit_price.toString(),
         lead_time_days: product.lead_time_days.toString(),
         restorage: product.restorage,
+        limite_critico: product.limite_critico?.toString() || "0",
         currentStockWarehouse: "",
       });
       setError(null);
@@ -100,8 +109,15 @@ export const EditProductModal = ({
     if (productProvidersData && Array.isArray(productProvidersData)) {
       const providers = productProvidersData.map((pp: any) => pp.cad_proveedor);
       const main = productProvidersData.find((pp: any) => pp.es_principal)?.cad_proveedor || null;
+      const prices: Record<string, string> = {};
+      productProvidersData.forEach((pp: any) => {
+        if (pp.precio !== undefined && pp.precio !== null) {
+          prices[pp.cad_proveedor] = pp.precio.toString();
+        }
+      });
       setSelectedProviders(providers);
       setMainProvider(main);
+      setProviderPrices(prices);
     }
   }, [productProvidersData]);
 
@@ -202,6 +218,7 @@ export const EditProductModal = ({
             min_unit_price: parseFloat(formState.min_unit_price) || null,
             lead_time_days: parseInt(formState.lead_time_days) || null,
             restorage: formState.restorage || null,
+            limite_critico: parseFloat(formState.limite_critico) || null,
           },
         });
 
@@ -210,7 +227,8 @@ export const EditProductModal = ({
           (s: any) => s.codigo_producto === product.id_product
         );
         const newStock = parseFloat(formState.currentStockWarehouse) || 0;
-        const oldStock = currentStock?.cantidad || 0;
+        const oldStockRaw = currentStock?.cantidad;
+        const oldStock = typeof oldStockRaw === 'string' ? parseFloat(oldStockRaw) : (typeof oldStockRaw === 'number' ? oldStockRaw : 0);
 
         if (newStock !== oldStock) {
           const difference = newStock - oldStock;
@@ -235,6 +253,19 @@ export const EditProductModal = ({
               productCode: product.id_product,
               quantity: Math.abs(difference),
               companyId,
+            });
+          }
+        }
+
+        // 3. Actualizar precios de proveedores
+        for (const providerId of selectedProviders) {
+          const priceStr = providerPrices[providerId];
+          const price = priceStr ? parseFloat(priceStr) : undefined;
+          if (price !== undefined && !isNaN(price)) {
+            await updateProductProviderMutation.mutateAsync({
+              productCode: product.id_product,
+              providerId,
+              body: { precio: price },
             });
           }
         }
@@ -390,6 +421,16 @@ export const EditProductModal = ({
               value={formState.restorage}
               onChange={(e) => handleInputChange("restorage", e.target.value)}
             />
+
+            <Input
+              label="Límite Crítico *"
+              type="number"
+              placeholder="0"
+              step="0.01"
+              value={formState.limite_critico}
+              onChange={(e) => handleInputChange("limite_critico", e.target.value)}
+              required
+            />
           </div>
         </div>
 
@@ -423,6 +464,8 @@ export const EditProductModal = ({
             onSelectionChange={handleProviderChange}
             mainProvider={mainProvider}
             onMainProviderChange={handleMainProviderChange}
+            providerPrices={providerPrices}
+            onProviderPriceChange={handleProviderPriceChange}
             isLoading={loadingProviders || loadingProductProviders}
           />
         </div>

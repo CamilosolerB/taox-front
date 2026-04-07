@@ -23,7 +23,11 @@ export interface MovementsTableRowProps {
 export const MovementsTableRow = ({ movement, onActionClick }: MovementsTableRowProps) => {
   const Icon = iconMap[movement.productIcon];
   const iconStyle = iconStyles[movement.productIcon];
-  const isEntry = movement.type === 'ENTRY';
+  
+  const typeStr = movement.type.toUpperCase();
+  const isEntry = typeStr.includes('ENTRADA');
+  const isExit = typeStr.includes('SALIDA');
+  const isTransfer = typeStr.includes('TRASLADO');
 
   return (
     <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
@@ -55,16 +59,18 @@ export const MovementsTableRow = ({ movement, onActionClick }: MovementsTableRow
           className={`px-2.5 py-1 rounded-full text-xs font-bold ${
             isEntry
               ? 'bg-[#e7f6ed] text-[#078838]'
-              : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+              : isExit 
+              ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+              : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
           }`}
         >
-          {movement.type}
+          {typeStr}
         </span>
       </td>
       <td className="px-6 py-4 text-right">
         <span
           className={`text-sm font-bold ${
-            isEntry ? 'text-[#078838]' : 'text-orange-700 dark:text-orange-400'
+            isEntry ? 'text-[#078838]' : isExit ? 'text-orange-700 dark:text-orange-400' : 'text-blue-700 dark:text-blue-400'
           }`}
         >
           {movement.quantity}

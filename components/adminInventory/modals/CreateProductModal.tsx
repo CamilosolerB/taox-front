@@ -25,6 +25,7 @@ interface FormState {
   min_unit_price: string;
   lead_time_days: string;
   restorage: string;
+  limite_critico: string;
   initialStockWarehouse: string;
 }
 
@@ -62,12 +63,18 @@ export const CreateProductModal = ({
     min_unit_price: "",
     lead_time_days: "",
     restorage: "",
+    limite_critico: "",
     initialStockWarehouse: "",
   });
 
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
   const [mainProvider, setMainProvider] = useState<string | null>(null);
+  const [providerPrices, setProviderPrices] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+
+  const handleProviderPriceChange = useCallback((providerId: string, price: string) => {
+    setProviderPrices(prev => ({ ...prev, [providerId]: price }));
+  }, []);
 
   const handleInputChange = useCallback(
     (field: keyof FormState, value: string) => {
@@ -104,6 +111,7 @@ export const CreateProductModal = ({
           min_unit_price: parseFloat(formState.min_unit_price) || 0,
           lead_time_days: parseInt(formState.lead_time_days) || 0,
           restorage: formState.restorage || "",
+          limite_critico: parseFloat(formState.limite_critico) || 0,
           company_id: companyId,
         });
         const initialStock = parseFloat(formState.initialStockWarehouse) || 0;
@@ -122,6 +130,7 @@ export const CreateProductModal = ({
               codigo_producto: formState.id_product,
               cad_proveedor: providerId,
               es_principal: mainProvider === providerId,
+              precio: parseFloat(providerPrices[providerId]) || undefined,
             });
           }
         }
@@ -137,10 +146,12 @@ export const CreateProductModal = ({
           min_unit_price: "",
           lead_time_days: "",
           restorage: "",
+          limite_critico: "",
           initialStockWarehouse: "",
         });
         setSelectedProviders([]);
         setMainProvider(null);
+        setProviderPrices({});
         onClose();
       } catch (err) {
         let errorMessage = "Error al crear producto";
@@ -314,6 +325,16 @@ export const CreateProductModal = ({
               value={formState.restorage}
               onChange={(e) => handleInputChange("restorage", e.target.value)}
             />
+
+            <Input
+              label="Límite Crítico *"
+              type="number"
+              placeholder="0"
+              step="0.01"
+              value={formState.limite_critico}
+              onChange={(e) => handleInputChange("limite_critico", e.target.value)}
+              required
+            />
           </div>
         </div>
 
@@ -347,6 +368,8 @@ export const CreateProductModal = ({
             onSelectionChange={setSelectedProviders}
             mainProvider={mainProvider}
             onMainProviderChange={setMainProvider}
+            providerPrices={providerPrices}
+            onProviderPriceChange={handleProviderPriceChange}
             isLoading={loadingProviders}
           />
         </div>

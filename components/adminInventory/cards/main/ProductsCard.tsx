@@ -6,15 +6,15 @@ import { ProductsTable } from "../../tables/main";
 import { Pagination } from "@/components/utils";
 import { useInventory } from "@/hooks";
 
-const COMPANY_ID = "b27ce798-2a16-47fa-89c4-0b7f8e46cda0";
 const ITEMS_PER_PAGE = 10;
 
 interface ProductsCardProps {
   searchFilter?: string;
+  companyId: string;
 }
 
-export const ProductsCard = ({ searchFilter = "" }: ProductsCardProps) => {
-  const { useGetProducts } = useInventory(COMPANY_ID);
+export const ProductsCard = ({ searchFilter = "", companyId }: ProductsCardProps) => {
+  const { useGetProducts } = useInventory(companyId);
   const { data: products = [], isLoading } = useGetProducts();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -68,7 +68,7 @@ export const ProductsCard = ({ searchFilter = "" }: ProductsCardProps) => {
               No hay productos disponibles
             </div>
           ) : (
-            <ProductsTable products={paginatedProducts} companyId={COMPANY_ID} />
+            <ProductsTable products={paginatedProducts} companyId={companyId} />
           )}
           <div className="p-6 border-t border-slate-200 dark:border-slate-800">
             <Pagination

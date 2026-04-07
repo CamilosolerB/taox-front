@@ -6,7 +6,7 @@ export interface MovementItem {
   productName: string;
   productSku: string;
   productIcon: 'beaker' | 'sliders' | 'zap';
-  type: 'ENTRY' | 'EXIT';
+  type: string;
   quantity: string;
   userInitials: string;
   userName: string;

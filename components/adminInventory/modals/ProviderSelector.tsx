@@ -10,6 +10,8 @@ interface ProviderSelectorProps {
   onSelectionChange: (providerIds: string[]) => void;
   mainProvider?: string | null;
   onMainProviderChange?: (providerId: string) => void;
+  providerPrices?: Record<string, string>;
+  onProviderPriceChange?: (providerId: string, price: string) => void;
   isLoading?: boolean;
 }
 
@@ -19,6 +21,8 @@ export const ProviderSelector = ({
   onSelectionChange,
   mainProvider,
   onMainProviderChange,
+  providerPrices = {},
+  onProviderPriceChange,
   isLoading = false,
 }: ProviderSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -127,6 +131,21 @@ export const ProviderSelector = ({
                       </div>
                     </button>
                   </div>
+                  
+                  {isSelected && onProviderPriceChange && (
+                    <div className="ml-2 flex items-center">
+                      <input
+                        type="number"
+                        placeholder="Precio"
+                        step="0.01"
+                        min="0"
+                        value={providerPrices[provider.cad_proveedor] || ""}
+                        onChange={(e) => onProviderPriceChange(provider.cad_proveedor, e.target.value)}
+                        className="w-24 px-2 py-1 text-xs border border-slate-200 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                  )}
 
                   {isSelected && onMainProviderChange && (
                     <button
