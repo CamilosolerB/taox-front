@@ -1,28 +1,58 @@
 "use client";
+
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input, PrimaryButton } from "@/components/utils";
 import { Key, User } from "lucide-react";
+import { useAuthHook } from "@/hooks";
 
 interface LoginFormState {
-  userName: string;
+  email: string;
   password: string;
 }
 
 export const LoginForm = () => {
+  const router = useRouter();
+  const { loginMutation } = useAuthHook();
   const [formState, setFormState] = useState<LoginFormState>({
-    userName: "",
+    email: "",
     password: "",
   });
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      await loginMutation.mutateAsync({
+        email: formState.email.trim(),
+        password: formState.password,
+      });
+      router.push("/company/dashboard");
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { error?: string }; status?: number } })
+          ?.response?.data?.error ||
+        (err as Error)?.message ||
+        "Error al iniciar sesión";
+      setError(message);
+    }
+  };
 
   return (
-    <form action="">
+    <form onSubmit={handleSubmit} noValidate>
+      {error && (
+        <p className="text-sm text-red-500 dark:text-red-400 mb-3" role="alert">
+          {error}
+        </p>
+      )}
       <Input
-        label="Correo electrónico o nombre de usuario"
+        label="Correo electrónico"
         type="email"
-        placeholder="Ingrese su correo electrónico o nombre de usuario"
-        value={formState.userName}
+        placeholder="Ingrese su correo electrónico"
+        value={formState.email}
         onChange={(e) =>
-          setFormState((prev) => ({ ...prev, userName: e.target.value }))
+          setFormState((prev) => ({ ...prev, email: e.target.value }))
         }
         icon={User}
       />
@@ -46,7 +76,9 @@ export const LoginForm = () => {
           </a>
         </div>
       </div>
-      <PrimaryButton type="submit">Ingresar</PrimaryButton>
+      <PrimaryButton type="submit" disabled={loginMutation.isPending}>
+        {loginMutation.isPending ? "Ingresando…" : "Ingresar"}
+      </PrimaryButton>
     </form>
   );
 };
