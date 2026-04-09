@@ -38,8 +38,10 @@ const CompanyMovementsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { companyId } = useAuth();
 
-  const { useGetMovements } = useMovements(companyId);
+  const { useGetMovements, useDownloadMovementsExcel, useDownloadMovementsPdf } = useMovements(companyId);
   const { data: movementsData, isLoading: isLoadingMovements } = useGetMovements();
+  const { mutate: downloadExcel } = useDownloadMovementsExcel();
+  const { mutate: downloadPdf } = useDownloadMovementsPdf();
   const { useGetProducts } = useInventory(companyId);
   const { data: products = [], isLoading: isLoadingProducts } = useGetProducts();
 
@@ -79,11 +81,11 @@ const CompanyMovementsPage = () => {
   };
 
   const handleExportExcel = () => {
-    console.log('Exportar Excel');
+    downloadExcel();
   };
 
   const handleExportPdf = () => {
-    console.log('Exportar PDF');
+    downloadPdf();
   };
 
   const handleMovementAction = (id: string) => {

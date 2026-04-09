@@ -11,6 +11,9 @@ import {
   ProvidersPagination,
   ProvidersStatsGrid,
 } from '@/components/adminInventory/providers';
+import { CreateProviderModal } from '@/components/adminInventory/providers/modals/CreateProviderModal';
+import { EditProviderModal } from '@/components/adminInventory/providers/modals/EditProviderModal';
+import type { ProviderItem } from '@/data/providersData';
 import {
   providerTabs,
   cityOptions,
@@ -31,8 +34,10 @@ const PAGE_SIZE = 4;
 
 const CompanyProviderPage = () => {
   const { companyId } = useAuth();
-  const { useGetProviders } = useProviders(companyId);
+  const { useGetProviders, useDeleteProvider, useDownloadProvidersCsv } = useProviders(companyId);
   const providersQuery = useGetProviders();
+  const deleteMutation = useDeleteProvider();
+  const { mutate: downloadCsv } = useDownloadProvidersCsv();
 
   const providersList = useMemo(() => {
     const list = providersQuery.data ?? [];
@@ -54,6 +59,8 @@ const CompanyProviderPage = () => {
   };
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingProvider, setEditingProvider] = useState<ProviderItem | null>(null);
 
   const totalItems = providersList.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
@@ -62,19 +69,30 @@ const CompanyProviderPage = () => {
   const showingCount = paginatedProviders.length;
 
   const handleAddEntity = () => {
-    console.log('Añadir nueva entidad');
+    setIsCreateModalOpen(true);
   };
 
   const handleExportCsv = () => {
-    console.log('Exportar CSV');
+    downloadCsv();
   };
 
   const handleViewContracts = (id: string) => {
     console.log('Ver contratos:', id);
   };
 
-  const handleProviderMore = (id: string) => {
-    console.log('Más opciones:', id);
+  const handleEditProvider = (provider: ProviderItem) => {
+    setEditingProvider(provider);
+  };
+
+  const handleDeleteProvider = async (id: string) => {
+    if (!companyId) return;
+    if (confirm('¿Estás seguro de que deseas eliminar este proveedor?')) {
+      try {
+        await deleteMutation.mutateAsync({ providerId: id, companyId });
+      } catch (err) {
+        console.error('Error al eliminar proveedor:', err);
+      }
+    }
   };
 
   if (!companyId) {
@@ -190,7 +208,8 @@ const CompanyProviderPage = () => {
           <ProvidersGrid
             providers={paginatedProviders}
             onViewContracts={handleViewContracts}
-            onMore={handleProviderMore}
+            onEdit={handleEditProvider}
+            onDelete={handleDeleteProvider}
           />
 
             <ProvidersPagination
@@ -203,6 +222,23 @@ const CompanyProviderPage = () => {
 
           <ProvidersStatsGrid stats={stats} />
         </div>
+
+        {companyId && (
+          <CreateProviderModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+            companyId={companyId}
+          />
+        )}
+
+        {companyId && editingProvider && (
+          <EditProviderModal
+            isOpen={!!editingProvider}
+            onClose={() => setEditingProvider(null)}
+            companyId={companyId}
+            providerId={editingProvider.id}
+          />
+        )}
       </main>
     </Sidebar>
   );

@@ -4,6 +4,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as productsApi from "@/api/endpoints/products";
 import type { ProductDTO, CreateProductDTO, UpdateProductDTO } from "@/api/types";
 
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+};
+
 const INVENTORY_QUERY_KEY = ["inventory", "products"];
 
 export function useInventory(companyId: string | null) {
@@ -69,6 +80,16 @@ export function useInventory(companyId: string | null) {
     });
   };
 
+  const useDownloadProductsExcel = () => {
+    return useMutation({
+      mutationFn: async () => {
+        if (!companyId) throw new Error("No company ID");
+        const blob = await productsApi.exportProductsExcel(companyId);
+        downloadBlob(blob, `productos_${companyId}.xlsx`);
+      },
+    });
+  };
+
   return {
     useGetProducts,
     useGetAllProducts,
@@ -76,5 +97,6 @@ export function useInventory(companyId: string | null) {
     useCreateProduct,
     useUpdateProduct,
     useDeleteProduct,
+    useDownloadProductsExcel,
   };
 }

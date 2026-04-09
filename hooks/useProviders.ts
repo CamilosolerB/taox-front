@@ -5,6 +5,17 @@ import * as providersApi from "@/api/endpoints/providers";
 import * as productProvidersApi from "@/api/endpoints/productProviders";
 import type { ProviderCreateDTO, ProviderUpdateDTO, ProductProviderCreateDTO, ProductProviderUpdateDTO } from "@/api/types";
 
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+};
+
 const PROVIDERS_QUERY_KEY = ["providers"];
 
 export function useProviders(companyId: string | null) {
@@ -161,6 +172,16 @@ export function useProviders(companyId: string | null) {
     });
   };
 
+  const useDownloadProvidersCsv = () => {
+    return useMutation({
+      mutationFn: async () => {
+        if (!companyId) throw new Error("No company ID");
+        const blob = await providersApi.exportProvidersCsv(companyId);
+        downloadBlob(blob, `proveedores_${companyId}.csv`);
+      },
+    });
+  };
+
   return {
     useGetProviders,
     useGetProvider,
@@ -174,5 +195,6 @@ export function useProviders(companyId: string | null) {
     useUpdateProductProvider,
     useDeleteProductProvider,
     useSetMainProvider,
+    useDownloadProvidersCsv,
   };
 }

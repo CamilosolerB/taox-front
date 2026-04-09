@@ -13,6 +13,15 @@ export async function getProviders(companyId: string): Promise<ProviderDTO[]> {
   return data;
 }
 
+/** GET /providers/export/csv?company_id= */
+export async function exportProvidersCsv(companyId: string): Promise<Blob> {
+  const { data } = await waterApi.get<Blob>("/providers/export/csv", {
+    params: { company_id: companyId },
+    responseType: 'blob'
+  });
+  return data;
+}
+
 /** POST /providers */
 export async function createProvider(body: ProviderCreateDTO): Promise<ProviderDTO> {
   const { data } = await waterApi.post<ProviderDTO>("/providers", body);

@@ -3,9 +3,22 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   createMovement as createMovementApi, 
-  getAllMovements 
+  getAllMovements,
+  exportMovementsExcel,
+  exportMovementsPdf
 } from "@/api/endpoints/movements";
 import { ProductMovementCreateDTO, ProductMovementResponseDTO } from "@/interfaces/types";
+
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+};
 
 /**
  * Movimientos: la TAOX API actual no expone endpoints de movimientos.
@@ -81,6 +94,26 @@ export function useMovements(_companyId: string | null) {
     });
   };
 
+  const useDownloadMovementsExcel = () => {
+    return useMutation({
+      mutationFn: async () => {
+        if (!_companyId) throw new Error("No company ID");
+        const blob = await exportMovementsExcel(_companyId);
+        downloadBlob(blob, `movimientos_${_companyId}.xlsx`);
+      },
+    });
+  };
+
+  const useDownloadMovementsPdf = () => {
+    return useMutation({
+      mutationFn: async () => {
+        if (!_companyId) throw new Error("No company ID");
+        const blob = await exportMovementsPdf(_companyId);
+        downloadBlob(blob, `movimientos_${_companyId}.pdf`);
+      },
+    });
+  };
+
   return {
     useGetMovements,
     useGetMovementsByProduct,
@@ -88,5 +121,7 @@ export function useMovements(_companyId: string | null) {
     useCreateMovement,
     useUpdateMovement,
     useDeleteMovement,
+    useDownloadMovementsExcel,
+    useDownloadMovementsPdf,
   };
 }

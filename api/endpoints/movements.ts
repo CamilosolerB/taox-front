@@ -13,6 +13,24 @@ export async function getAllMovements(companyId: string): Promise<ProductMovemen
   return data;
 }
 
+/** GET /movements/export/excel */
+export async function exportMovementsExcel(companyId: string): Promise<Blob> {
+  const { data } = await waterApi.get<Blob>("/movements/export/excel", {
+    params: { company_id: companyId },
+    responseType: 'blob'
+  });
+  return data;
+}
+
+/** GET /movements/export/pdf */
+export async function exportMovementsPdf(companyId: string): Promise<Blob> {
+  const { data } = await waterApi.get<Blob>("/movements/export/pdf", {
+    params: { company_id: companyId },
+    responseType: 'blob'
+  });
+  return data;
+}
+
 /** GET /movements/{id_movimiento} */
 export async function getMovementById(
   movementId: number,

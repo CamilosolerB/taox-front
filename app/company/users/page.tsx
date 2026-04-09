@@ -9,6 +9,7 @@ import {
   UsersTable,
   UsersPagination,
 } from '@/components/adminInventory/users';
+import { CreateUserModal } from '@/components/adminInventory/users/modals/CreateUserModal';
 import type { UserItem } from '@/data/usersData';
 import { useAuth } from '@/hooks';
 import { useUsers, useRoles } from '@/hooks';
@@ -48,6 +49,7 @@ const CompanyUsersPage = () => {
 
   const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
 
   const roleMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -67,7 +69,7 @@ const CompanyUsersPage = () => {
   const showingCount = usersList.length;
 
   const handleCreateUser = () => {
-    // TODO: abrir modal/form de crear usuario (CreateUserDTO)
+    setIsCreateUserModalOpen(true);
   };
 
   const handleEditUser = (id: string) => {
@@ -148,6 +150,14 @@ const CompanyUsersPage = () => {
             />
           </div>
         </div>
+        
+        {authUser?.company_id && (
+          <CreateUserModal
+            isOpen={isCreateUserModalOpen}
+            onClose={() => setIsCreateUserModalOpen(false)}
+            companyId={authUser.company_id}
+          />
+        )}
       </main>
     </Sidebar>
   );

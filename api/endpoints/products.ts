@@ -25,6 +25,14 @@ export async function getProductsByCompanyId(companyId: string): Promise<Product
   return data;
 }
 
+/** GET /products/by-company/{companyId}/export/excel */
+export async function exportProductsExcel(companyId: string): Promise<Blob> {
+  const { data } = await waterApi.get<Blob>(`/products/by-company/${companyId}/export/excel`, {
+    responseType: 'blob'
+  });
+  return data;
+}
+
 /** PUT /products/{product_id} */
 export async function updateProduct(
   productId: string,

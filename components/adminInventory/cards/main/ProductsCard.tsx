@@ -14,8 +14,9 @@ interface ProductsCardProps {
 }
 
 export const ProductsCard = ({ searchFilter = "", companyId }: ProductsCardProps) => {
-  const { useGetProducts } = useInventory(companyId);
+  const { useGetProducts, useDownloadProductsExcel } = useInventory(companyId);
   const { data: products = [], isLoading } = useGetProducts();
+  const { mutate: downloadExcel, isPending: isDownloadingExcel } = useDownloadProductsExcel();
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filtrar productos según búsqueda
@@ -53,9 +54,13 @@ export const ProductsCard = ({ searchFilter = "", companyId }: ProductsCardProps
                 <Filter className="w-4 h-4" />
                 <span>Filtros</span>
               </button>
-              <button className="flex items-center space-x-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800">
+              <button 
+                onClick={() => downloadExcel()}
+                disabled={isDownloadingExcel}
+                className="flex items-center space-x-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
+              >
                 <Download className="w-4 h-4" />
-                <span>Exportar</span>
+                <span>{isDownloadingExcel ? "Exportando..." : "Exportar"}</span>
               </button>
             </div>
           </div>

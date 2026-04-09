@@ -6,7 +6,8 @@ import type { ProviderItem } from '@/data/providersData';
 export interface ProviderCardProps {
   provider: ProviderItem;
   onViewContracts?: (id: string) => void;
-  onMore?: (id: string) => void;
+  onEdit?: (provider: ProviderItem) => void;
+  onDelete?: (id: string) => void;
 }
 
 const roleBadgeClass: Record<ProviderItem['role'], string> = {
@@ -14,7 +15,7 @@ const roleBadgeClass: Record<ProviderItem['role'], string> = {
   Client: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400',
 };
 
-export const ProviderCard = ({ provider, onViewContracts, onMore }: ProviderCardProps) => {
+export const ProviderCard = ({ provider, onViewContracts, onEdit, onDelete }: ProviderCardProps) => {
   const isInactive = provider.status === 'INACTIVE';
 
   return (
@@ -98,13 +99,22 @@ export const ProviderCard = ({ provider, onViewContracts, onMore }: ProviderCard
           <FileText className="w-4 h-4 text-sm" />
           View Contracts
         </button>
-        <button
-          type="button"
-          onClick={() => onMore?.(provider.id)}
-          className="p-1.5 text-[#617589] dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 rounded-md transition-colors shadow-sm"
-        >
-          <MoreHorizontal className="w-5 h-5 text-xl" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onEdit?.(provider)}
+            className="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-md transition-colors shadow-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete?.(provider.id)}
+            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-md transition-colors shadow-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   );
