@@ -27,8 +27,8 @@ export default function MovementsExample() {
     createMovement(
       {
         codigo_producto: "A00000001",
-        id_proceso_origen: 1,
-        id_proceso_destino: 2,
+        id_proceso_origen: "1",
+        id_proceso_destino: "2",
         cantidad: 10,
         notas: "Movimiento de prueba",
         id_empresa: "company-id-placeholder",

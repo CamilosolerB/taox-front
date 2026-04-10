@@ -36,7 +36,10 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
 
   const items: StockItem[] = useMemo(() => {
     const products = getProducts.data ?? [];
-    const warehouse = getStockWarehouse.data ?? [];
+    const warehouse = (getStockWarehouse.data ?? []).map((s) => ({
+      ...s,
+      cantidad: Number(s.cantidad),
+    }));
     return mergeProductsWithStock(products, warehouse);
   }, [getProducts.data, getStockWarehouse.data]);
 

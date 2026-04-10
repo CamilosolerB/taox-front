@@ -14,6 +14,7 @@ import {
 import { CreateProviderModal } from '@/components/adminInventory/providers/modals/CreateProviderModal';
 import { EditProviderModal } from '@/components/adminInventory/providers/modals/EditProviderModal';
 import type { ProviderItem } from '@/data/providersData';
+import type { ProviderDTO } from '@/interfaces/types';
 import {
   providerTabs,
   cityOptions,
@@ -60,7 +61,7 @@ const CompanyProviderPage = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingProvider, setEditingProvider] = useState<ProviderItem | null>(null);
+  const [editingProvider, setEditingProvider] = useState<ProviderDTO | null>(null);
 
   const totalItems = providersList.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
@@ -81,7 +82,9 @@ const CompanyProviderPage = () => {
   };
 
   const handleEditProvider = (provider: ProviderItem) => {
-    setEditingProvider(provider);
+    // Find the original DTO from the raw API data using the id (which maps to cad_proveedor)
+    const dto = (providersQuery.data ?? []).find((d) => d.cad_proveedor === provider.id) ?? null;
+    setEditingProvider(dto);
   };
 
   const handleDeleteProvider = async (id: string) => {
@@ -236,7 +239,7 @@ const CompanyProviderPage = () => {
             isOpen={!!editingProvider}
             onClose={() => setEditingProvider(null)}
             companyId={companyId}
-            providerId={editingProvider.id}
+            provider={editingProvider}
           />
         )}
       </main>

@@ -117,8 +117,8 @@ export function ExecuteOperationModal({
     try {
       await createMovement.mutateAsync({
         codigo_producto: formData.productCode,
-        id_proceso_origen: Number(formData.processOriginId),
-        id_proceso_destino: Number(formData.processDestinationId),
+        id_proceso_origen: formData.processOriginId,
+        id_proceso_destino: formData.processDestinationId,
         cantidad: quantity,
         notas: formData.notes || undefined,
         id_empresa: companyId,
@@ -334,7 +334,7 @@ export function ExecuteOperationModal({
           >
             <option value="">Seleccionar proceso...</option>
             {processesList
-              .filter((p) => p.id_proceso !== Number(formData.processOriginId))
+              .filter((p) => p.id_proceso !== formData.processOriginId)
               .map((process) => (
                 <option key={process.id_proceso} value={process.id_proceso}>
                   {process.nombre}

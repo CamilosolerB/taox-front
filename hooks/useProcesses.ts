@@ -23,7 +23,7 @@ export function useProcesses(companyId: string | null) {
     });
   };
 
-  const useGetProcessById = (processId: number | null) => {
+  const useGetProcessById = (processId: string | null) => {
     return useQuery({
       queryKey: [...PROCESSES_QUERY_KEY, "detail", processId, companyId],
       queryFn: () =>
@@ -51,7 +51,7 @@ export function useProcesses(companyId: string | null) {
         processId,
         body,
       }: {
-        processId: number;
+        processId: string;
         body: ProcessUpdateDTO;
       }) => processesApi.updateProcess(processId, body),
       onSuccess: () => {
@@ -62,7 +62,7 @@ export function useProcesses(companyId: string | null) {
 
   const useDeleteProcess = () => {
     return useMutation({
-      mutationFn: ({ processId }: { processId: number }) =>
+      mutationFn: ({ processId }: { processId: string }) =>
         companyId
           ? processesApi.deleteProcess(processId, companyId)
           : Promise.reject(),

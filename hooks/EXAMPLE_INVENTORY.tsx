@@ -41,6 +41,7 @@ export default function InventoryExample() {
         min_unit_price: 5,
         lead_time_days: 3,
         restorage: "Standard",
+        limite_critico: 0,
         company_id: "company-id-placeholder",
       },
       {
