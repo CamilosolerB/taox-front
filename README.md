@@ -1,5 +1,8 @@
 # taox-front
 
+> [!TIP]
+> **¿Eres nuevo en esto?** Si no eres desarrollador y quieres instalar este proyecto, sigue nuestra [Guía de Instalación Detallada](../GUIA_INSTALACION.md).
+
 ## Descripción General
 
 `taox-front` es el componente frontend de la aplicación `taox`, desarrollado con Next.js y TypeScript. Este proyecto se enfoca en proporcionar una interfaz de usuario moderna y reactiva, consumiendo datos de la API de `taox_back`.
