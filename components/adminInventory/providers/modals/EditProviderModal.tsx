@@ -133,167 +133,176 @@ export function EditProviderModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Editar Proveedor">
-      <form className="space-y-4 max-h-96 overflow-y-auto pr-2">
+      <form className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+        {/* Header decoration matches the new interactive style */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-600 opacity-50" />
+
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-3 p-4 bg-green-900/30 border border-green-600 rounded-lg">
-            <CheckCircle2 size={20} className="text-green-400 flex-shrink-0" />
-            <p className="text-green-300">¡Proveedor actualizado exitosamente!</p>
+          <div className="flex items-center gap-3 p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+            <CheckCircle2 size={20} className="text-emerald-400 flex-shrink-0" />
+            <p className="text-emerald-300 antialiased font-medium">¡Proveedor actualizado exitosamente!</p>
           </div>
         )}
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-3 p-4 bg-red-900/30 border border-red-600 rounded-lg">
+          <div className="flex items-center gap-3 p-4 bg-red-950/30 border border-red-500/30 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
             <AlertCircle size={20} className="text-red-400 flex-shrink-0" />
-            <p className="text-red-300">{error}</p>
+            <p className="text-red-300 antialiased font-medium">{error}</p>
           </div>
         )}
 
-        {/* Provider Code (Read-only) */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Código Proveedor
-          </label>
-          <input
-            type="text"
-            value={provider.cad_proveedor}
-            disabled
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-400 disabled:opacity-50 cursor-not-allowed"
-          />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Provider Code (Read-only) */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 italic">
+              Código (Identificador Único)
+            </label>
+            <input
+              type="text"
+              value={provider.cad_proveedor}
+              disabled
+              className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-500 cursor-not-allowed font-mono text-sm opacity-70"
+            />
+          </div>
 
-        {/* Nombre */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Nombre *
-          </label>
-          <input
-            type="text"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleInputChange}
-            placeholder="Nombre del proveedor"
-            maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
+          {/* Nombre */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Nombre Comercial *
+            </label>
+            <input
+              type="text"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleInputChange}
+              placeholder="Nombre del proveedor"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
         </div>
 
         {/* Contacto */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Contacto *
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Persona de Contacto *
           </label>
           <input
             type="text"
             name="contacto"
             value={formData.contacto}
             onChange={handleInputChange}
-            placeholder="Persona de contacto"
-            maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            placeholder="Nombre completo"
+            className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
           />
         </div>
 
         {/* Dirección */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Dirección *
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Dirección Física *
           </label>
           <input
             type="text"
             name="direccion"
             value={formData.direccion}
             onChange={handleInputChange}
-            placeholder="Dirección completa"
-            maxLength={255}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            placeholder="Calle, Ciudad, País"
+            className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
           />
         </div>
 
-        {/* Teléfono */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Teléfono *
-          </label>
-          <input
-            type="tel"
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleInputChange}
-            placeholder="Ej: +57 1 2345678"
-            maxLength={20}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Teléfono */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Teléfono Fijo
+            </label>
+            <input
+              type="tel"
+              name="telefono"
+              value={formData.telefono}
+              onChange={handleInputChange}
+              placeholder="+00 0 0000000"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
+
+          {/* Celular */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Celular / WhatsApp *
+            </label>
+            <input
+              type="tel"
+              name="celular"
+              value={formData.celular}
+              onChange={handleInputChange}
+              placeholder="+00 000 0000000"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
         </div>
 
-        {/* Celular */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Celular *
-          </label>
-          <input
-            type="tel"
-            name="celular"
-            value={formData.celular}
-            onChange={handleInputChange}
-            placeholder="Ej: +57 300 1234567"
-            maxLength={20}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Correo */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Correo Electrónico *
+            </label>
+            <input
+              type="email"
+              name="correo"
+              value={formData.correo}
+              onChange={handleInputChange}
+              placeholder="ejemplo@correo.com"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
 
-        {/* Web */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Sitio Web
-          </label>
-          <input
-            type="url"
-            name="web"
-            value={formData.web}
-            onChange={handleInputChange}
-            placeholder="https://www.ejemplo.com"
-            maxLength={255}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
-        </div>
-
-        {/* Correo */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Correo *
-          </label>
-          <input
-            type="email"
-            name="correo"
-            value={formData.correo}
-            onChange={handleInputChange}
-            placeholder="contacto@proveedor.com"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
+          {/* Web */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Sitio Web (Opcional)
+            </label>
+            <input
+              type="url"
+              name="web"
+              value={formData.web}
+              onChange={handleInputChange}
+              placeholder="https://www.empresa.com"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
         </div>
 
         {/* Estado */}
-        <div>
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              name="is_active"
-              checked={formData.is_active}
-              onChange={handleInputChange}
-              className="w-4 h-4 rounded border-slate-600"
-            />
-            <span className="text-sm font-medium text-slate-200">Activo</span>
+        <div className="pt-2 px-1">
+          <label className="group flex items-center gap-3 cursor-pointer">
+            <div className="relative flex items-center justify-center">
+              <input
+                type="checkbox"
+                name="is_active"
+                checked={formData.is_active}
+                onChange={handleInputChange}
+                className="peer sr-only"
+              />
+              <div className="w-10 h-5 bg-slate-800 rounded-full peer peer-checked:bg-emerald-500/50 transition-all shadow-inner" />
+              <div className="absolute left-1 top-1 w-3 h-3 bg-slate-400 peer-checked:bg-emerald-400 peer-checked:translate-x-5 rounded-full transition-all shadow-md" />
+            </div>
+            <span className="text-sm font-bold tracking-widest uppercase text-slate-400 group-hover:text-slate-200 transition-colors">
+              {formData.is_active ? "Proveedor Activo" : "Proveedor Inactivo"}
+            </span>
           </label>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-4 border-t border-slate-700">
+        <div className="flex gap-4 pt-6 mt-4 border-t border-slate-800">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors font-medium"
+            className="flex-1 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition-all font-bold text-sm tracking-widest uppercase border border-slate-800"
             disabled={loading}
           >
             Cancelar
@@ -301,9 +310,9 @@ export function EditProviderModal({
           <PrimaryButton
             onClick={handleSubmit}
             disabled={loading || success}
-            className="flex-1"
+            className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-all font-bold text-sm tracking-widest uppercase shadow-lg shadow-emerald-900/20"
           >
-            {loading ? "Guardando..." : success ? "✓ Guardado" : "Guardar Cambios"}
+            {loading ? "Actualizando..." : success ? "✓ Guardado" : "Guardar Cambios"}
           </PrimaryButton>
         </div>
       </form>

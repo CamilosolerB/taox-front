@@ -49,11 +49,11 @@ export const Input = ({
           )}
 
           <input
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg
+            className={`form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg
               text-[#111418] dark:text-white dark:bg-slate-800 border border-[#dbe0e6]
               dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary
-              h-12 placeholder:text-[#617589] pl-2 pr-2 text-base font-normal leading-normal
-              disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed dark:disabled:bg-slate-700/50"
+              h-12 placeholder:text-[#617589] ${Icon ? "pl-11" : "pl-4"} pr-4 text-base font-normal leading-normal
+              disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed dark:disabled:bg-slate-700/50`}
             placeholder={placeholder}
             value={value}
             onChange={onChange}

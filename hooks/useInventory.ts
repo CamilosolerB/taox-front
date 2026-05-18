@@ -90,6 +90,24 @@ export function useInventory(companyId: string | null) {
     });
   };
 
+  const useDownloadBulkTemplate = () => {
+    return useMutation({
+      mutationFn: async () => {
+        const blob = await productsApi.downloadBulkTemplate();
+        downloadBlob(blob, "plantilla_productos.xlsx");
+      },
+    });
+  };
+
+  const useBulkUpload = () => {
+    return useMutation({
+      mutationFn: (file: File) => productsApi.bulkUploadProducts(file),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: INVENTORY_QUERY_KEY });
+      },
+    });
+  };
+
   return {
     useGetProducts,
     useGetAllProducts,
@@ -98,5 +116,8 @@ export function useInventory(companyId: string | null) {
     useUpdateProduct,
     useDeleteProduct,
     useDownloadProductsExcel,
+    useDownloadBulkTemplate,
+    useBulkUpload,
   };
 }
+

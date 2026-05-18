@@ -17,13 +17,27 @@ export const InventoryPagination = ({
   itemsPerPage,
   onPageChange,
 }: PaginationProps) => {
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
+  // Sliding window de máximo 10 páginas
+  const maxVisiblePages = 10;
+  let startPage = Math.max(1, currentPage - 5);
+  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage < maxVisiblePages - 1) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
   return (
-    <div className="px-6 py-4 bg-background-light dark:bg-gray-800/30 border-t border-[#dbe0e6] dark:border-gray-700 flex items-center justify-between">
+    <div className="px-6 py-4 bg-background-light dark:bg-gray-800/30 border-t border-[#dbe0e6] dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
       <p className="text-xs text-[#617589]">
-        Showing {startItem} to {endItem} of {totalItems.toLocaleString()} items
+        Mostrando {startItem} a {endItem} de {totalItems.toLocaleString()} items
       </p>
       <div className="flex gap-2">
         <button
@@ -34,7 +48,7 @@ export const InventoryPagination = ({
           <ChevronLeft className="w-4 h-4 text-sm" />
         </button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        {visiblePages.map((page) => (
           <button
             key={page}
             onClick={() => onPageChange(page)}
@@ -50,7 +64,7 @@ export const InventoryPagination = ({
 
         <button
           className="w-8 h-8 flex items-center justify-center rounded border border-[#dbe0e6] dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || totalPages === 0}
           onClick={() => onPageChange(currentPage + 1)}
         >
           <ChevronRight className="w-4 h-4 text-sm" />

@@ -120,122 +120,138 @@ export function CreateProviderModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Crear Proveedor">
-      <form className="space-y-4 max-h-96 overflow-y-auto pr-2">
+      <form className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+        {/* Header decoration matches the new interactive style */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-600 opacity-50" />
+
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-3 p-4 bg-green-900/30 border border-green-600 rounded-lg">
-            <CheckCircle2 size={20} className="text-green-400 flex-shrink-0" />
-            <p className="text-green-300">¡Proveedor creado exitosamente!</p>
+          <div className="flex items-center gap-3 p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+            <CheckCircle2 size={20} className="text-emerald-400 flex-shrink-0" />
+            <p className="text-emerald-300 antialiased font-medium">¡Proveedor creado exitosamente!</p>
           </div>
         )}
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-3 p-4 bg-red-900/30 border border-red-600 rounded-lg">
+          <div className="flex items-center gap-3 p-4 bg-red-950/30 border border-red-500/30 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
             <AlertCircle size={20} className="text-red-400 flex-shrink-0" />
-            <p className="text-red-300">{error}</p>
+            <p className="text-red-300 antialiased font-medium">{error}</p>
           </div>
         )}
 
-        {/* Código Proveedor */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Código Proveedor *
-          </label>
-          <input
-            type="text"
-            name="cad_proveedor"
-            value={formData.cad_proveedor}
-            onChange={handleInputChange}
-            placeholder="Ej: PROV001"
-            maxLength={50}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Código Proveedor */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Código *
+            </label>
+            <input
+              type="text"
+              name="cad_proveedor"
+              value={formData.cad_proveedor}
+              onChange={handleInputChange}
+              placeholder="Ej: PROV-001"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
 
-        {/* Nombre */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Nombre *
-          </label>
-          <input
-            type="text"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleInputChange}
-            placeholder="Nombre del proveedor"
-            maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
+          {/* Nombre */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Nombre Comercial *
+            </label>
+            <input
+              type="text"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleInputChange}
+              placeholder="Nombre de la empresa"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
         </div>
 
         {/* Contacto */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Contacto *
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Persona de Contacto *
           </label>
           <input
             type="text"
             name="contacto"
             value={formData.contacto}
             onChange={handleInputChange}
-            placeholder="Persona de contacto"
-            maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            placeholder="Nombre completo"
+            className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
           />
         </div>
 
         {/* Dirección */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Dirección *
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Dirección Física *
           </label>
           <input
             type="text"
             name="direccion"
             value={formData.direccion}
             onChange={handleInputChange}
-            placeholder="Dirección completa"
-            maxLength={255}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            placeholder="Calle, Ciudad, País"
+            className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
           />
         </div>
 
-        {/* Teléfono */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Teléfono *
-          </label>
-          <input
-            type="tel"
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleInputChange}
-            placeholder="Ej: +57 1 2345678"
-            maxLength={20}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Teléfono */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Teléfono Fijo
+            </label>
+            <input
+              type="tel"
+              name="telefono"
+              value={formData.telefono}
+              onChange={handleInputChange}
+              placeholder="+00 0 0000000"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
+
+          {/* Celular */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              Celular / WhatsApp *
+            </label>
+            <input
+              type="tel"
+              name="celular"
+              value={formData.celular}
+              onChange={handleInputChange}
+              placeholder="+00 000 0000000"
+              className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+            />
+          </div>
         </div>
 
-        {/* Celular */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Celular *
+        {/* Correo */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            Correo Electrónico *
           </label>
           <input
-            type="tel"
-            name="celular"
-            value={formData.celular}
+            type="email"
+            name="correo"
+            value={formData.correo}
             onChange={handleInputChange}
-            placeholder="Ej: +57 300 1234567"
-            maxLength={20}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            placeholder="ejemplo@correo.com"
+            className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
           />
         </div>
 
         {/* Web */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             Sitio Web (Opcional)
           </label>
           <input
@@ -243,33 +259,17 @@ export function CreateProviderModal({
             name="web"
             value={formData.web}
             onChange={handleInputChange}
-            placeholder="https://www.ejemplo.com"
-            maxLength={255}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
-          />
-        </div>
-
-        {/* Correo */}
-        <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
-            Correo *
-          </label>
-          <input
-            type="email"
-            name="correo"
-            value={formData.correo}
-            onChange={handleInputChange}
-            placeholder="contacto@proveedor.com"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            placeholder="https://www.empresa.com"
+            className="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
           />
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-4 border-t border-slate-700">
+        <div className="flex gap-4 pt-6 mt-2 border-t border-slate-800">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors font-medium"
+            className="flex-1 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition-all font-bold text-sm tracking-widest uppercase border border-slate-800"
             disabled={loading}
           >
             Cancelar
@@ -277,9 +277,9 @@ export function CreateProviderModal({
           <PrimaryButton
             onClick={handleSubmit}
             disabled={loading || success}
-            className="flex-1"
+            className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-all font-bold text-sm tracking-widest uppercase shadow-lg shadow-emerald-900/20"
           >
-            {loading ? "Creando..." : success ? "✓ Crear" : "Crear Proveedor"}
+            {loading ? "Procesando..." : success ? "✓ Creado" : "Guardar Proveedor"}
           </PrimaryButton>
         </div>
       </form>

@@ -17,8 +17,10 @@ export { useRoles } from "./useRoles";
 export { useClients } from "./useClients";
 export { useStock } from "./useStock";
 export { useAlerts } from "./useAlerts";
+export { useChemicalStock } from "./useChemicalStock";
 export { useChemicalStocks } from "./useChemicalStocks";
 export { useProcesses } from "./useProcesses";
+export { useCompanies } from "./useCompanies";
 
 export { useAuth } from "@/providers/AuthProvider";
 export { useInventoryStore } from "@/providers/InventoryProvider";

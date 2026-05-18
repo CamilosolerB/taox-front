@@ -7,9 +7,10 @@ import type {
   UserDTO,
 } from "@/api/types";
 
-/** GET /users/ */
-export async function getAllUsers(): Promise<UserDetailDTO[]> {
-  const { data } = await waterApi.get<UserDetailDTO[]>("/users/");
+/** GET /users/ — rol_names es opcional, ej: "company_admin,sudo" */
+export async function getAllUsers(role_names?: string): Promise<UserDetailDTO[]> {
+  const params = role_names ? { role_names } : {};
+  const { data } = await waterApi.get<UserDetailDTO[]>("/users/", { params });
   return data;
 }
 

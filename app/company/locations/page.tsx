@@ -1,5 +1,5 @@
 
-import { Sidebar } from '@/components/adminInventory/utils';
+
 import {
     LocationBreadcrumb,
     LocationPageHeader,
@@ -20,7 +20,7 @@ import {
 
 const LocationsPage = () => {
     return (
-        <Sidebar>
+        <>
             <main className="flex-1 flex flex-col overflow-hidden">
                 <LocationBreadcrumb items={breadcrumbItems} />
                 <div className="flex-1 overflow-y-auto p-8">
@@ -46,7 +46,7 @@ const LocationsPage = () => {
                     <TankIndicatorsGrid title="Indicadores de Nivel del Tanque en Vivo" tanks={tanks} />
                 </div>
             </main>
-        </Sidebar>
+        </>
     );
 };
 

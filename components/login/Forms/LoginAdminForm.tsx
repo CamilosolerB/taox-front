@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input, PrimaryButton } from "@/components/utils";
 import { Key, User } from "lucide-react";
 import { useAuthHook } from "@/hooks";
+import * as authApi from "@/api/endpoints/auth";
 
 interface LoginAdminFormState {
   email: string;
@@ -28,7 +29,12 @@ export const LoginAdminForm = () => {
         email: formState.email.trim(),
         password: formState.password,
       });
-      router.push("/company/dashboard");
+      const currentUser = await authApi.getCurrentUser();
+      if (!currentUser.company_id || currentUser.company_id === "None") {
+        router.push("/sudo/companies");
+      } else {
+        router.push("/company/dashboard");
+      }
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { error?: string }; status?: number } })

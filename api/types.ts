@@ -73,7 +73,9 @@ export interface UserDetailDTO {
   password: string;
   is_active: boolean;
   role_id: string;
-  company_id: string;
+  company_id: string | null;
+  role_name?: string | null;
+  company_name?: string | null;
 }
 
 export interface UserWithRelationsDTO {
@@ -108,6 +110,7 @@ export interface CompanyDTO {
   address: string;
   phone: string;
   email: string;
+  logo?: string;
   is_active: boolean;
 }
 
@@ -117,7 +120,12 @@ export interface CreateCompanyDTO {
   address: string;
   phone: string;
   email: string;
+  logo?: string;
   is_active?: boolean;
+  // Administrador de la empresa
+  admin_username: string;
+  admin_email: string;
+  admin_password: string;
 }
 
 export interface UpdateCompanyDTO {
@@ -126,7 +134,12 @@ export interface UpdateCompanyDTO {
   address?: string | null;
   phone?: string | null;
   email?: string | null;
+  logo?: string | null;
   is_active?: boolean | null;
+  // Opcionales para actualizar el administrador
+  admin_username?: string;
+  admin_email?: string;
+  admin_password?: string;
 }
 
 // --- Products ---
@@ -141,7 +154,10 @@ export interface ProductDTO {
   lead_time_days: number;
   restorage: string;
   limite_critico: number;
+  warehouse_id?: string;
   company_id: string;
+  fds?: string;
+  fds_url?: string;
 }
 
 export interface CreateProductDTO {
@@ -155,7 +171,10 @@ export interface CreateProductDTO {
   lead_time_days: number;
   restorage: string;
   limite_critico: number;
+  warehouse_id?: string;
   company_id: string;
+  fds?: string;
+  fds_url?: string;
 }
 
 export interface UpdateProductDTO {
@@ -168,6 +187,10 @@ export interface UpdateProductDTO {
   lead_time_days?: number | null;
   restorage?: string | null;
   limite_critico?: number | null;
+  warehouse_id?: string | null;
+  id_product?: string | null;
+  fds?: string | null;
+  fds_url?: string | null;
 }
 
 // --- Providers ---

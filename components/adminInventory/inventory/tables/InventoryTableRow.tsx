@@ -16,18 +16,32 @@ interface StockItem {
     textColor: string;
     dotColor: string;
   };
+  warehouse_id?: string;
+  fds?: string;
+  fds_url?: string;
 }
 
 interface InventoryTableRowProps {
   item: StockItem;
   onEdit?: (id: string) => void;
+  onViewDetail?: (item: StockItem) => void;
 }
 
-export const InventoryTableRow = ({ item, onEdit }: InventoryTableRowProps) => {
+export const InventoryTableRow = ({ item, onEdit, onViewDetail }: InventoryTableRowProps) => {
   return (
     <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-      <td className="px-6 py-4 text-sm font-mono text-[#617589]">{item.code}</td>
-      <td className="px-6 py-4 text-sm font-bold">{item.name}</td>
+      <td 
+        onClick={() => onViewDetail?.(item)}
+        className="px-6 py-4 text-sm font-mono text-[#617589] cursor-pointer hover:text-primary transition-colors"
+      >
+        {item.code}
+      </td>
+      <td 
+        onClick={() => onViewDetail?.(item)}
+        className="px-6 py-4 text-sm font-bold cursor-pointer hover:text-primary hover:underline transition-colors"
+      >
+        {item.name}
+      </td>
       <td className="px-6 py-4">
         <span
           className={`px-2.5 py-1 rounded text-xs font-bold ${item.categoryColor}`}

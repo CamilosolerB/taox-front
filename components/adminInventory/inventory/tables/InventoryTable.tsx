@@ -16,14 +16,18 @@ interface StockItem {
     textColor: string;
     dotColor: string;
   };
+  warehouse_id?: string;
+  fds?: string;
+  fds_url?: string;
 }
 
 interface InventoryTableProps {
   items: StockItem[];
   onEdit?: (id: string) => void;
+  onViewDetail?: (item: StockItem) => void;
 }
 
-export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
+export const InventoryTable = ({ items, onEdit, onViewDetail }: InventoryTableProps) => {
   return (
     <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-[#dbe0e6] dark:border-gray-700 shadow-sm overflow-hidden">
       <table className="w-full text-left border-collapse">
@@ -54,7 +58,12 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
         </thead>
         <tbody className="divide-y divide-[#dbe0e6] dark:divide-gray-700">
           {items.map((item) => (
-            <InventoryTableRow key={item.id} item={item} onEdit={onEdit} />
+            <InventoryTableRow 
+              key={item.id} 
+              item={item} 
+              onEdit={onEdit} 
+              onViewDetail={onViewDetail} 
+            />
           ))}
         </tbody>
       </table>

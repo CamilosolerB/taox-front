@@ -120,7 +120,7 @@ export function CreateUserModal({
 
         {/* Username */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Nombre de Usuario *
           </label>
           <input
@@ -129,13 +129,13 @@ export function CreateUserModal({
             value={formData.username}
             onChange={handleInputChange}
             placeholder="Ej: jdoe"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Correo Electrónico *
           </label>
           <input
@@ -144,13 +144,13 @@ export function CreateUserModal({
             value={formData.email}
             onChange={handleInputChange}
             placeholder="correo@ejemplo.com"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Contraseña *
           </label>
           <input
@@ -159,13 +159,13 @@ export function CreateUserModal({
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Mínimo 8 caracteres"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Role Select */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Rol del Usuario *
           </label>
           <div className="relative">
@@ -173,7 +173,7 @@ export function CreateUserModal({
               name="role_id"
               value={formData.role_id}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white appearance-none focus:outline-none focus:border-primary"
+              className="block w-full pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white appearance-none focus:outline-none focus:border-primary"
             >
               {AVAILABLE_ROLES.map((role) => (
                 <option key={role.id} value={role.id}>

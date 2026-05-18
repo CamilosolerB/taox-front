@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Sidebar } from '@/components/adminInventory/utils';
 import {
   CreateClientModal,
   EditClientModal,
@@ -38,46 +37,34 @@ const CompanyClientsPage = () => {
 
   if (!companyId) {
     return (
-      <Sidebar>
-        <main className="flex-1 overflow-y-auto flex flex-col">
-          <div className="p-8 flex items-center justify-center">
-            <p className="text-slate-500">
-              Inicia sesión para ver clientes.
-            </p>
-          </div>
-        </main>
-      </Sidebar>
+      <div className="flex-1 flex items-center justify-center py-20">
+        <p className="text-slate-500">
+          Inicia sesión para ver clientes.
+        </p>
+      </div>
     );
   }
 
   if (clientsQuery.isLoading) {
     return (
-      <Sidebar>
-        <main className="flex-1 overflow-y-auto flex flex-col">
-          <div className="p-8 flex items-center justify-center">
-            <p className="text-slate-500">Cargando clientes…</p>
-          </div>
-        </main>
-      </Sidebar>
+      <div className="flex-1 flex items-center justify-center py-20">
+        <p className="text-slate-500 animate-pulse">Cargando clientes…</p>
+      </div>
     );
   }
 
   if (clientsQuery.isError) {
     return (
-      <Sidebar>
-        <main className="flex-1 overflow-y-auto flex flex-col">
-          <div className="p-8 flex flex-col items-center justify-center gap-4">
-            <p className="text-red-500">Error al cargar clientes.</p>
-            <button
-              type="button"
-              onClick={() => clientsQuery.refetch()}
-              className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium"
-            >
-              Reintentar
-            </button>
-          </div>
-        </main>
-      </Sidebar>
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-20">
+        <p className="text-red-500">Error al cargar clientes.</p>
+        <button
+          type="button"
+          onClick={() => clientsQuery.refetch()}
+          className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium transition-colors hover:bg-primary/90"
+        >
+          Reintentar
+        </button>
+      </div>
     );
   }
 
@@ -98,7 +85,7 @@ const CompanyClientsPage = () => {
     {
       icon: <Building className="w-5 h-5 text-primary" />,
       label: 'Clientes Activos',
-      value: `${clients.filter((c: any) => c.es_activo).length} Activos`,
+      value: `${clients.filter((c: any) => c.is_active).length} Activos`,
       description: (
         <p className="text-[#617589] dark:text-gray-400">
           Clientes con servicio activo
@@ -107,100 +94,96 @@ const CompanyClientsPage = () => {
     },
     {
       icon: <Users className="w-5 h-5 text-primary" />,
-      label: 'Por Ciudad',
-      value: 'Múltiples ubicaciones',
+      label: 'Ciudades Únicas',
+      value: `${new Set(clients.map((c: any) => c.ciudad).filter(Boolean)).size} Ciudades`,
       description: (
         <p className="text-[#617589] dark:text-gray-400">
-          Distribuidores regionales
+          Distribución regional
         </p>
       ),
     },
   ];
 
   return (
-    <Sidebar>
-      <main className="flex-1 overflow-y-auto flex flex-col">
-        <div className="p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">
-                  Gestión de Clientes
-                </h1>
-                <p className="text-slate-400">
-                  Administra los clientes y consumidores de servicios de agua.
-                </p>
-              </div>
-              <button
-                onClick={handleAddEntity}
-                className="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors"
-              >
-                + Nuevo Cliente
-              </button>
-            </div>
+    <div className="w-full">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+              Gestión de Clientes
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400">
+              Administra los clientes y consumidores de servicios de agua.
+            </p>
           </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {stats.map((stat, i) => (
-              <div
-                key={i}
-                className="bg-slate-800 border border-slate-700 rounded-lg p-6"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    {stat.icon}
-                    <h3 className="text-slate-400 text-sm">{stat.label}</h3>
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-white mb-2">
-                  {stat.value}
-                </p>
-                {stat.description}
-              </div>
-            ))}
-          </div>
-
-          {/* Clients Table */}
-          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-            <ClientsTable
-              clients={clients}
-              isLoading={clientsQuery.isLoading}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          </div>
+          <button
+            onClick={handleAddEntity}
+            className="inline-flex items-center justify-center px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-all shadow-lg shadow-primary/20 active:scale-95"
+          >
+            + Nuevo Cliente
+          </button>
         </div>
+      </div>
 
-        {/* Modals */}
-        <CreateClientModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          companyId={companyId}
-        />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {stats.map((stat, i) => (
+          <div
+            key={i}
+            className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                {stat.icon}
+              </div>
+              <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium">{stat.label}</h3>
+            </div>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+              {stat.value}
+            </p>
+            {stat.description}
+          </div>
+        ))}
+      </div>
 
-        <EditClientModal
-          isOpen={showEditModal}
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedClient(null);
-          }}
-          client={selectedClient}
-          companyId={companyId}
+      {/* Clients Table */}
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
+        <ClientsTable
+          clients={clients}
+          isLoading={clientsQuery.isLoading}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
+      </div>
 
-        <DeleteClientAlert
-          isOpen={showDeleteAlert}
-          onClose={() => {
-            setShowDeleteAlert(false);
-            setSelectedClient(null);
-          }}
-          client={selectedClient}
-          companyId={companyId}
-        />
-      </main>
-    </Sidebar>
+      {/* Modals */}
+      <CreateClientModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        companyId={companyId}
+      />
+
+      <EditClientModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedClient(null);
+        }}
+        client={selectedClient}
+        companyId={companyId}
+      />
+
+      <DeleteClientAlert
+        isOpen={showDeleteAlert}
+        onClose={() => {
+          setShowDeleteAlert(false);
+          setSelectedClient(null);
+        }}
+        client={selectedClient}
+        companyId={companyId}
+      />
+    </div>
   );
 };
 

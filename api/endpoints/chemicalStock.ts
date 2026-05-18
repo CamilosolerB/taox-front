@@ -49,10 +49,16 @@ export async function updateChemicalStock(
   return data;
 }
 
-/** GET /stocks/?company_id= */
-export async function getChemicalStocks(companyId: string): Promise<ChemicalStockResponseDTO[]> {
+/** GET /stocks/?company_id=&id_proceso= */
+export async function getChemicalStocks(
+  companyId: string,
+  idProceso?: string
+): Promise<ChemicalStockResponseDTO[]> {
   const { data } = await waterApi.get<ChemicalStockResponseDTO[]>("/stocks/", {
-    params: { company_id: companyId },
+    params: { 
+      company_id: companyId,
+      id_proceso: idProceso
+    },
   });
   return data;
 }

@@ -39,13 +39,15 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
     }));
   }, [products]);
 
-  // Convert processes to SearchSelect options
+  // Convert processes to SearchSelect options (Filtering only Warehouses)
   const processOptions: SearchSelectOption[] = useMemo(() => {
-    return processes.map((process) => ({
-      id: process.id_proceso,
-      label: process.nombre,
-      description: `ID: ${process.id_proceso}`,
-    }));
+    return processes
+      .filter(p => p.tipo_proceso === 'almacenamiento')
+      .map((process) => ({
+        id: process.id_proceso,
+        label: process.nombre,
+        description: `Almacén - ID: ${process.id_proceso}`,
+      }));
   }, [processes]);
 
   if (!isOpen) return null;
@@ -147,8 +149,8 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
           <div className="grid grid-cols-2 gap-4">
             <div className={tipoMovimiento === 'entrada' ? "opacity-50 pointer-events-none" : ""}>
               <SearchSelect
-                label="Proceso Origen"
-                placeholder="Selecciona proceso..."
+                label="Almacén Origen"
+                placeholder="Selecciona almacén..."
                 options={processOptions}
                 value={originProcessId}
                 onChange={setOriginProcessId}
@@ -158,8 +160,8 @@ export const NewMovementModal = ({ isOpen, onClose, companyId }: NewMovementModa
             </div>
             <div className={tipoMovimiento === 'salida' ? "opacity-50 pointer-events-none" : ""}>
               <SearchSelect
-                label="Proceso Destino"
-                placeholder="Selecciona proceso..."
+                label="Almacén Destino"
+                placeholder="Selecciona almacén..."
                 options={processOptions}
                 value={destinationProcessId}
                 onChange={setDestinationProcessId}

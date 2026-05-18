@@ -9,11 +9,11 @@ const CHEMICAL_STOCK_QUERY_KEY = ["chemicalStock"];
 export function useChemicalStock(companyId: string | null) {
     const queryClient = useQueryClient();
 
-    const useGetChemicalStocks = () => {
+    const useGetChemicalStocks = (idProceso?: string) => {
         return useQuery({
-            queryKey: [...CHEMICAL_STOCK_QUERY_KEY, companyId],
+            queryKey: [...CHEMICAL_STOCK_QUERY_KEY, companyId, idProceso],
             queryFn: () =>
-                companyId ? chemicalStockApi.getChemicalStocks(companyId) : Promise.resolve([]),
+                companyId ? chemicalStockApi.getChemicalStocks(companyId, idProceso) : Promise.resolve([]),
             enabled: !!companyId,
             staleTime: 1000 * 60 * 5,
         });

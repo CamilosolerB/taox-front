@@ -5,6 +5,7 @@ import { Input, PrimaryButton, Modal } from "@/components/utils";
 import { useInventory } from "@/hooks";
 import { useProviders } from "@/hooks/useProviders";
 import { useStock } from "@/hooks/useStock";
+import { useWarehouses } from "@/hooks/useWarehouses";
 import { AlertCircle } from "lucide-react";
 import { Product } from "@/interfaces/product";
 import { ProviderSelector } from "./ProviderSelector";
@@ -17,6 +18,7 @@ interface EditProductModalProps {
 }
 
 interface FormState {
+  id_product: string;
   name: string;
   generic_name: string;
   price: string;
@@ -26,7 +28,10 @@ interface FormState {
   lead_time_days: string;
   restorage: string;
   limite_critico: string;
+  warehouse_id: string;
   currentStockWarehouse: string;
+  fds: string;
+  fds_url: string;
 }
 
 export const EditProductModal = ({
@@ -52,7 +57,11 @@ export const EditProductModal = ({
   const incrementStockMutation = useIncrementStockWarehouse();
   const decrementStockMutation = useDecrementStockWarehouse();
 
+  const { useGetAllWarehouses } = useWarehouses(companyId);
+  const { data: warehouses = [] } = useGetAllWarehouses();
+
   const [formState, setFormState] = useState<FormState>({
+    id_product: "",
     name: "",
     generic_name: "",
     price: "",
@@ -62,7 +71,10 @@ export const EditProductModal = ({
     lead_time_days: "",
     restorage: "",
     limite_critico: "",
+    warehouse_id: "",
     currentStockWarehouse: "",
+    fds: "",
+    fds_url: "",
   });
 
   const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
@@ -78,6 +90,7 @@ export const EditProductModal = ({
   useEffect(() => {
     if (isOpen && product) {
       setFormState({
+        id_product: product.id_product || "",
         name: product.name,
         generic_name: product.generic_name,
         price: product.price.toString(),
@@ -87,7 +100,10 @@ export const EditProductModal = ({
         lead_time_days: product.lead_time_days.toString(),
         restorage: product.restorage,
         limite_critico: product.limite_critico?.toString() || "0",
+        warehouse_id: (product as any).warehouse_id || "",
         currentStockWarehouse: "",
+        fds: (product as any).fds || "",
+        fds_url: (product as any).fds_url || "",
       });
       setError(null);
 
@@ -197,6 +213,7 @@ export const EditProductModal = ({
 
       // Validación básica
       if (
+        !formState.id_product ||
         !formState.name ||
         !formState.generic_name ||
         !formState.unit_measure
@@ -205,11 +222,14 @@ export const EditProductModal = ({
         return;
       }
 
+      const finalProductId = formState.id_product;
+
       try {
         // 1. Actualizar el producto
         await updateMutation.mutateAsync({
           productId: product.id_product,
           body: {
+            id_product: finalProductId,
             name: formState.name,
             generic_name: formState.generic_name,
             price: parseFloat(formState.price) || null,
@@ -219,6 +239,9 @@ export const EditProductModal = ({
             lead_time_days: parseInt(formState.lead_time_days) || null,
             restorage: formState.restorage || null,
             limite_critico: parseFloat(formState.limite_critico) || null,
+            warehouse_id: formState.warehouse_id || null,
+            fds: formState.fds || null,
+            fds_url: formState.fds_url || null,
           },
         });
 
@@ -236,21 +259,21 @@ export const EditProductModal = ({
           if (!currentStock && newStock > 0) {
             // Crear stock si no existe
             await createStockWarehouseMutation.mutateAsync({
-              codigo_producto: product.id_product,
+              codigo_producto: finalProductId,
               cantidad: newStock,
               company_id: companyId,
             });
           } else if (difference > 0) {
             // Incrementar stock
             await incrementStockMutation.mutateAsync({
-              productCode: product.id_product,
+              productCode: finalProductId,
               quantity: difference,
               companyId,
             });
           } else if (difference < 0) {
             // Decrementar stock
             await decrementStockMutation.mutateAsync({
-              productCode: product.id_product,
+              productCode: finalProductId,
               quantity: Math.abs(difference),
               companyId,
             });
@@ -263,7 +286,7 @@ export const EditProductModal = ({
           const price = priceStr ? parseFloat(priceStr) : undefined;
           if (price !== undefined && !isNaN(price)) {
             await updateProductProviderMutation.mutateAsync({
-              productCode: product.id_product,
+              productCode: finalProductId,
               providerId,
               body: { precio: price },
             });
@@ -307,7 +330,7 @@ export const EditProductModal = ({
         setError(errorMessage);
       }
     },
-    [formState, product, updateMutation, companyId, onClose, stockWarehouseData, createStockWarehouseMutation, incrementStockMutation, decrementStockMutation]
+    [formState, product, updateMutation, companyId, onClose, stockWarehouseData, createStockWarehouseMutation, incrementStockMutation, decrementStockMutation, selectedProviders, providerPrices, updateProductProviderMutation]
   );
 
   return (
@@ -320,18 +343,20 @@ export const EditProductModal = ({
           </div>
         )}
 
-        {product && (
-          <div className="text-sm text-slate-500 dark:text-slate-400">
-            <strong>ID del Producto:</strong> {product.id_product}
-          </div>
-        )}
-
         {/* Información Básica */}
         <div>
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
             Información Básica
           </h3>
           <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Código del Producto *"
+              placeholder="Ej: CHM-2041"
+              value={formState.id_product}
+              onChange={(e) => handleInputChange("id_product", e.target.value)}
+              required
+            />
+
             <Input
               label="Nombre del Producto *"
               placeholder="Ej: SODA EN ESCAMAS"
@@ -344,9 +369,7 @@ export const EditProductModal = ({
               label="Nombre Genérico *"
               placeholder="Ej: HIDROXIDO DE SODIO"
               value={formState.generic_name}
-              onChange={(e) =>
-                handleInputChange("generic_name", e.target.value)
-              }
+              onChange={(e) => handleInputChange("generic_name", e.target.value)}
               required
             />
 
@@ -354,10 +377,30 @@ export const EditProductModal = ({
               label="Unidad de Medida *"
               placeholder="Ej: KG, L, SACO"
               value={formState.unit_measure}
-              onChange={(e) =>
-                handleInputChange("unit_measure", e.target.value)
-              }
+              onChange={(e) => handleInputChange("unit_measure", e.target.value)}
               required
+            />
+          </div>
+        </div>
+
+        {/* Ficha de Seguridad */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
+            Ficha de Seguridad (FDS)
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Ficha de Seguridad (FDS)"
+              placeholder="Ej: X, Sí, N/A"
+              value={formState.fds}
+              onChange={(e) => handleInputChange("fds", e.target.value)}
+            />
+
+            <Input
+              label="Documento FDS (URL)"
+              placeholder="Ej: https://docs.google.com/..."
+              value={formState.fds_url}
+              onChange={(e) => handleInputChange("fds_url", e.target.value)}
             />
           </div>
         </div>
@@ -392,9 +435,7 @@ export const EditProductModal = ({
               placeholder="0.00"
               step="0.01"
               value={formState.min_unit_price}
-              onChange={(e) =>
-                handleInputChange("min_unit_price", e.target.value)
-              }
+              onChange={(e) => handleInputChange("min_unit_price", e.target.value)}
             />
           </div>
         </div>
@@ -410,9 +451,7 @@ export const EditProductModal = ({
               type="number"
               placeholder="0"
               value={formState.lead_time_days}
-              onChange={(e) =>
-                handleInputChange("lead_time_days", e.target.value)
-              }
+              onChange={(e) => handleInputChange("lead_time_days", e.target.value)}
             />
 
             <Input
@@ -434,6 +473,32 @@ export const EditProductModal = ({
           </div>
         </div>
 
+        {/* Almacén */}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
+            Almacén
+          </h3>
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">
+                Seleccionar Almacén
+              </label>
+              <select
+                value={formState.warehouse_id}
+                onChange={(e) => handleInputChange("warehouse_id", e.target.value)}
+                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white"
+              >
+                <option value="">Seleccionar almacén...</option>
+                {warehouses.map((warehouse) => (
+                  <option key={warehouse.id_proceso} value={warehouse.id_proceso}>
+                    {warehouse.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
         {/* Stock Actual */}
         <div>
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
@@ -446,9 +511,7 @@ export const EditProductModal = ({
               placeholder="0"
               step="0.01"
               value={formState.currentStockWarehouse}
-              onChange={(e) =>
-                handleInputChange("currentStockWarehouse", e.target.value)
-              }
+              onChange={(e) => handleInputChange("currentStockWarehouse", e.target.value)}
             />
           </div>
         </div>

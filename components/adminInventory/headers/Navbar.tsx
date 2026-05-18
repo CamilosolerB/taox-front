@@ -3,11 +3,16 @@
 import { useState } from "react";
 import { LogOut, Bell } from "lucide-react";
 import { useAuth } from "@/providers/AuthProvider";
-import { useAlerts } from "@/hooks";
+import { useAlerts, useCompanies } from "@/hooks";
 
-export default function Navbar() {
-  const { user, logout } = useAuth();
-  const { companyId } = useAuth();
+interface NavbarProps {
+  isSidebarCollapsed?: boolean;
+}
+
+export default function Navbar({ isSidebarCollapsed = false }: NavbarProps) {
+  const { user, logout, companyId } = useAuth();
+  const { useGetCompany } = useCompanies();
+  const { data: company } = useGetCompany(companyId);
   const [showNotifications, setShowNotifications] = useState(false);
   const alerts = useAlerts(companyId).useGetActiveAlerts();
 
@@ -19,15 +24,9 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900 border-b border-slate-800 shadow-lg">
-      <div className="max-w-full px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo / Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">T</span>
-            </div>
-            <h1 className="text-xl font-bold text-white hidden sm:block">TAOX</h1>
-          </div>
+      <div className={`transition-all duration-300 ${isSidebarCollapsed ? "lg:ml-20" : "lg:ml-72"}`}>
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 transition-all duration-300">
+          <div className="flex items-center justify-between">
 
           {/* Center - Empty space for navigation items if needed */}
           <div className="flex-1" />
@@ -145,6 +144,7 @@ export default function Navbar() {
             >
               <LogOut size={20} />
             </button>
+          </div>
           </div>
         </div>
       </div>

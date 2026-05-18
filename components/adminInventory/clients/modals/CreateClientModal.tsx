@@ -145,7 +145,7 @@ export function CreateClientModal({
 
         {/* Código Cliente */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Código Cliente *
           </label>
           <input
@@ -155,13 +155,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Ej: CLI001"
             maxLength={50}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Nombre Cliente */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Nombre Cliente *
           </label>
           <input
@@ -171,13 +171,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Nombre del cliente"
             maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Teléfono 1 */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Teléfono *
           </label>
           <input
@@ -187,13 +187,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Ej: +57 1 2345678"
             maxLength={20}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Teléfono 2 */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Teléfono Secundario
           </label>
           <input
@@ -203,13 +203,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Ej: +57 1 9876543"
             maxLength={20}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Contacto */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Contacto *
           </label>
           <input
@@ -219,13 +219,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Persona de contacto"
             maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Correo */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Correo *
           </label>
           <input
@@ -234,13 +234,13 @@ export function CreateClientModal({
             value={formData.correo}
             onChange={handleInputChange}
             placeholder="contacto@cliente.com"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Ciudad */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Ciudad *
           </label>
           <input
@@ -250,13 +250,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Ej: Bogotá"
             maxLength={100}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Tipo de Agua */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Tipo de Agua *
           </label>
           <input
@@ -266,13 +266,13 @@ export function CreateClientModal({
             onChange={handleInputChange}
             placeholder="Ej: Agua Destilada"
             maxLength={50}
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Cantidad Promedio */}
         <div>
-          <label className="block text-sm font-medium text-slate-200 mb-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
             Cantidad Promedio (kg) *
           </label>
           <input
@@ -283,7 +283,7 @@ export function CreateClientModal({
             placeholder="Ej: 500"
             step="0.01"
             min="0"
-            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-primary"
+            className="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-primary"
           />
         </div>
 

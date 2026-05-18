@@ -46,3 +46,32 @@ export async function updateProduct(
 export async function deleteProduct(productId: string): Promise<void> {
   await waterApi.delete(`/products/${productId}`);
 }
+
+/** GET /products/bulk-template — download blank xlsx template */
+export async function downloadBulkTemplate(): Promise<Blob> {
+  const { data } = await waterApi.get<Blob>("/products/bulk-template", {
+    responseType: "blob",
+  });
+  return data;
+}
+
+/** POST /products/bulk-upload — upload xlsx for mass import */
+export interface BulkUploadResult {
+  message: string;
+  created: number;
+  total_rows: number;
+  errors: { row: number; error: string }[];
+}
+
+export async function bulkUploadProducts(file: File): Promise<BulkUploadResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const { data } = await waterApi.post<BulkUploadResult>(
+    "/products/bulk-upload",
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return data;
+}
+

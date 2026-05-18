@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Sidebar } from '@/components/adminInventory/utils';
+
 import {
   ProvidersNavHeader,
   ProvidersPageHeader,
@@ -31,7 +31,7 @@ import {
   Map,
 } from 'lucide-react';
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 10;
 
 const CompanyProviderPage = () => {
   const { companyId } = useAuth();
@@ -100,31 +100,31 @@ const CompanyProviderPage = () => {
 
   if (!companyId) {
   return (
-    <Sidebar>
+    <>
       <main className="flex-1 overflow-y-auto flex flex-col">
           <div className="p-8 flex items-center justify-center">
             <p className="text-slate-500">Inicia sesión para ver proveedores.</p>
           </div>
         </main>
-      </Sidebar>
+      </>
     );
   }
 
   if (providersQuery.isLoading && providersList.length === 0) {
     return (
-      <Sidebar>
+      <>
         <main className="flex-1 overflow-y-auto flex flex-col">
           <div className="p-8 flex items-center justify-center">
             <p className="text-slate-500">Cargando proveedores…</p>
           </div>
         </main>
-      </Sidebar>
+      </>
     );
   }
 
   if (providersQuery.isError) {
     return (
-      <Sidebar>
+      <>
         <main className="flex-1 overflow-y-auto flex flex-col">
           <div className="p-8 flex flex-col items-center justify-center gap-4">
             <p className="text-red-500">Error al cargar proveedores.</p>
@@ -137,48 +137,36 @@ const CompanyProviderPage = () => {
             </button>
           </div>
         </main>
-      </Sidebar>
+      </>
     );
   }
 
   const stats = [
     {
       icon: <BarChart3 className="w-5 h-5 text-primary" />,
-      label: 'Socios Globales',
-      value: '12 Proveedores',
+      label: 'Proveedores Registrados',
+      value: `${providersList.length} Proveedores`,
       description: (
-        <p className="text-green-600 dark:text-green-400 flex items-center gap-1">
-                <TrendingUp className="w-4 h-4 text-xs" />
-                +2 añadidos este mes
-              </p>
+        <p className="text-slate-500 dark:text-slate-400">
+          Total en la plataforma
+        </p>
       ),
     },
     {
       icon: <ClipboardCheck className="w-5 h-5 text-primary" />,
-      label: 'Contratos Activos',
-      value: '18 Activos',
+      label: 'Proveedores Activos',
+      value: `${providersList.filter(p => p.status === 'ACTIVE').length} Activos`,
       description: (
-        <p className="text-[#617589] dark:text-gray-400 flex items-center gap-1">
-                <Calendar className="w-4 h-4 text-xs" />
-                4 expirando en 30 días
-              </p>
-      ),
-    },
-    {
-      icon: <Building className="w-5 h-5 text-primary" />,
-      label: 'Cobertura Regional',
-      value: '6 Ciudades',
-      description: (
-        <p className="text-[#617589] dark:text-gray-400 flex items-center gap-1">
-                <Map className="w-4 h-4 text-xs" />
-          En Texas & Nuevo México
+        <p className="text-green-600 dark:text-green-400 flex items-center gap-1">
+          <TrendingUp className="w-4 h-4 text-xs" />
+          Con estado activo
         </p>
       ),
     },
   ];
 
   return (
-    <Sidebar>
+    <>
       <main className="flex-1 overflow-y-auto flex flex-col">
         <ProvidersNavHeader
           searchPlaceholder="Search partners by name, NIT or city..."
@@ -243,7 +231,7 @@ const CompanyProviderPage = () => {
           />
         )}
       </main>
-    </Sidebar>
+    </>
   );
 };
 

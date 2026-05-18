@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sidebar } from '@/components/adminInventory/utils';
+
 import {
   MovementsNavHeader,
   MovementsPageHeader,
@@ -94,43 +94,37 @@ const CompanyMovementsPage = () => {
 
   const stats = [
     {
-      label: 'Movimientos Mensuales',
-      value: '1,284',
+      label: 'Movimientos Totales',
+      value: totalResults.toString(),
       description: (
         <p className="text-[#078838] text-xs font-bold flex items-center gap-1">
           <TrendingUp className="w-3.5 h-3.5 text-[14px]" />
-          +12.5% desde el mes pasado
+          Registrados en la plataforma
         </p>
       ),
       icon: <ArrowRightLeft className="text-primary w-5 h-5 text-[20px]" />,
     },
     {
-      label: 'Valor Total del Inventario',
-      value: '$45,230.00',
+      label: 'Entradas',
+      value: movements.filter(m => m.tipo_movimiento?.toUpperCase() === 'ENTRADA').length.toString(),
       description: (
         <p className="text-[#078838] text-xs font-bold flex items-center gap-1">
           <TrendingUp className="w-3.5 h-3.5 text-[14px]" />
-          +5.4% este trimestre
+          En la vista actual
         </p>
       ),
       icon: <DollarSign className="text-primary w-5 h-5 text-[20px]" />,
     },
     {
-      label: 'Artículos de Stock Activos',
-      value: '342',
-      description: <p className="text-[#617589] text-xs font-medium">Across 5 categories</p>,
-      icon: <Beaker className="text-primary w-5 h-5 text-[20px]" />,
-    },
-    {
-      label: 'Reordenes Pendientes',
-      value: '8',
-      description: <p className="text-red-500 text-xs font-bold">Acción requerida</p>,
-      icon: <Zap className="text-red-500 w-5 h-5 text-[20px]" />,
+      label: 'Salidas',
+      value: movements.filter(m => m.tipo_movimiento?.toUpperCase() === 'SALIDA').length.toString(),
+      description: <p className="text-[#617589] text-xs font-medium">En la vista actual</p>,
+      icon: <Zap className="text-primary w-5 h-5 text-[20px]" />,
     },
   ];
 
   return (
-    <Sidebar>
+    <>
       <main className="flex-1 flex flex-col min-w-0">
         {/* <MovementsNavHeader
           title="Historial de Movimientos"
@@ -216,7 +210,7 @@ const CompanyMovementsPage = () => {
           />
         )}
       </main>
-    </Sidebar>
+    </>
   );
 };
 

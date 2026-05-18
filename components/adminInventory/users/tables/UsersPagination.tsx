@@ -15,8 +15,22 @@ export const UsersPagination = ({
   showingCount,
   onPageChange,
 }: UsersPaginationProps) => {
+  // Sliding window de máximo 10 páginas
+  const maxVisiblePages = 10;
+  let startPage = Math.max(1, currentPage - 5);
+  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage < maxVisiblePages - 1) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
   return (
-    <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+    <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
       <span className="text-sm text-slate-500 dark:text-slate-400">
         Mostrando {showingCount} de {totalItems} usuarios
       </span>
@@ -29,7 +43,8 @@ export const UsersPagination = ({
         >
           Anterior
         </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+
+        {visiblePages.map((page) => (
           <button
             key={page}
             type="button"
@@ -43,10 +58,11 @@ export const UsersPagination = ({
             {page}
           </button>
         ))}
+
         <button
           type="button"
           className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
-          disabled={currentPage >= totalPages}
+          disabled={currentPage >= totalPages || totalPages === 0}
           onClick={() => onPageChange(currentPage + 1)}
         >
           Siguiente

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getToken, removeToken } from "@/lib/auth";
 import * as authApi from "@/api/endpoints/auth";
 import type { CurrentUserDTO } from "@/api/types";
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<CurrentUserDTO | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   const refetchUser = useCallback(async () => {
     const token = getToken();
@@ -73,7 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(() => {
     removeToken();
     setUser(null);
-  }, []);
+    router.push("/login");
+  }, [router]);
 
   const value: AuthContextValue = {
     user,

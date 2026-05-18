@@ -9,12 +9,12 @@ import { useInventory } from "@/hooks";
 
 interface ProductsTableProps {
   products: Product[];
-  companyId?: string;
+  companyId: string;
 }
 
 export const ProductsTable = ({
   products,
-  companyId = "b27ce798-2a16-47fa-89c4-0b7f8e46cda0",
+  companyId,
 }: ProductsTableProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

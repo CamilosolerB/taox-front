@@ -17,6 +17,15 @@ export function useUsers() {
     });
   };
 
+  /** Sólo usuarios con rol company_Admin o sudo — para la vista de administración Sudo */
+  const useGetAdminUsers = () => {
+    return useQuery({
+      queryKey: [...USERS_QUERY_KEY, "admin_roles"],
+      queryFn: () => usersApi.getAllUsers("company_Admin,sudo"),
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+
   const useGetUser = (userId: string | null) => {
     return useQuery({
       queryKey: [...USERS_QUERY_KEY, userId],
@@ -61,6 +70,7 @@ export function useUsers() {
 
   return {
     useGetUsers,
+    useGetAdminUsers,
     useGetUser,
     useCreateUser,
     useUpdateUser,

@@ -12,6 +12,9 @@ export interface StockItem {
     textColor: string;
     dotColor: string;
   };
+  warehouse_id?: string;
+  fds?: string;
+  fds_url?: string;
 }
 
 export const inventoryItems: StockItem[] = [
@@ -98,7 +101,7 @@ export const locations = [
 ];
 
 export const inventoryTabs = [
-  { id: 'all', label: 'Todos los Artículos' },
-  { id: 'critical', label: 'Stock Crítico', badge: 12 },
-  { id: 'recent', label: 'Pedidos Recientes' },
+  { id: 'all', label: 'Todos' },
+  { id: 'critical', label: 'Crítico' },
+  { id: 'low', label: 'Bajo' },
 ];

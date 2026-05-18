@@ -9,5 +9,6 @@ export interface Product {
   lead_time_days: number;
   restorage: string;
   limite_critico: number;
+  warehouse_id?: string;
   company_id: string;
 }
