@@ -17,12 +17,36 @@ import { InventoryProvider, useInventoryStore } from '@/providers/InventoryProvi
 import { WarehouseSelector } from '@/components/adminInventory/inventory/WarehouseSelector';
 import { useWarehouses } from '@/hooks/useWarehouses';
 import { useStock } from '@/hooks/useStock';
-import { ChevronRight, Home, LayoutGrid, AlertTriangle } from 'lucide-react';
+import { ChevronRight, Home, LayoutGrid, AlertTriangle, Copy, Check } from 'lucide-react';
 import { mapProductToStockItem } from '@/lib/mapProductToStockItem';
 import type { ProcessResponseDTO } from '@/interfaces/types';
 import { ProductDetailModal } from '@/components/adminInventory/modals';
 
 const ITEMS_PER_PAGE = 10;
+
+function WarehouseHeaderId({ currentWarehouse }: { currentWarehouse: ProcessResponseDTO }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(currentWarehouse.id_proceso);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div 
+      onClick={handleCopy}
+      className="inline-flex items-center gap-1.5 cursor-pointer bg-slate-800/90 hover:bg-slate-700/90 text-emerald-400 border border-slate-700/60 text-xs font-mono rounded-lg px-2.5 py-1.5 transition-all duration-200 select-none shadow-md shadow-black/10"
+      title="Copiar identificador del almacén"
+    >
+      <span className="text-slate-500 font-sans font-medium">ID del Almacén:</span>
+      <span className="font-semibold tracking-tight">{currentWarehouse.id_proceso}</span>
+      {copied ? (
+        <Check size={11} className="text-emerald-300 animate-scale-in" />
+      ) : (
+        <Copy size={11} className="text-slate-500 hover:text-emerald-400 transition-colors" />
+      )}
+    </div>
+  );
+}
 
 function InventoryPageContent() {
   const {
@@ -155,9 +179,14 @@ function InventoryPageContent() {
             
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h1 className="text-3xl font-bold text-white tracking-tight">
                   {currentWarehouse ? currentWarehouse.nombre : "Gestión de Inventario"}
-                </h1>
+                  </h1>
+                  {currentWarehouse && (
+                    <WarehouseHeaderId currentWarehouse={currentWarehouse} />
+                  )}
+                </div>
                 <p className="text-slate-400 mt-1">
                   {currentWarehouse 
                     ? `Visualizando inventario de ${currentWarehouse.nombre}`
