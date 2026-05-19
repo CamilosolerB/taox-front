@@ -13,7 +13,6 @@ interface CreateUserModalProps {
 }
 
 const AVAILABLE_ROLES = [
-  { id: "f0bb4b28-38f7-4072-a6e9-c23dec4fb133", name: "Sudo" },
   { id: "e687ff93-cfec-4718-a03d-7bcbdacfef9d", name: "company_Admin" },
   { id: "3232b29d-5feb-4dae-b9e5-0c6b0d95d544", name: "observer" },
 ];
@@ -27,7 +26,7 @@ export function CreateUserModal({
     username: "",
     email: "",
     password: "",
-    role_id: AVAILABLE_ROLES[1].id, // default to company_Admin
+    role_id: AVAILABLE_ROLES[0].id, // default to company_Admin
   });
 
   const [error, setError] = useState("");

@@ -62,7 +62,13 @@ const CompanyUsersPage = () => {
     if (!getUsers.data) return [];
     return getUsers.data
       .map((u) => mapApiUserToItem(u, roleMap[u.role_id]))
-      .filter((u) => u.role === 'company_Admin' || u.role === 'observer');
+      .filter((u) => {
+        const roleLower = u.role ? u.role.toLowerCase() : '';
+        return roleLower === 'company_admin' || 
+               roleLower === 'observer' || 
+               roleLower.startsWith('admin -') || 
+               roleLower.startsWith('admin-');
+      });
   }, [getUsers.data, roleMap]);
 
   const totalItems = usersList.length;
