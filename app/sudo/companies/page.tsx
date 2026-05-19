@@ -80,7 +80,7 @@ export default function SudoCompaniesPage() {
                     <td className="px-6 py-4 flex items-center space-x-3">
                       {company.logo ? (
                         <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
-                          <img src={`http://127.0.0.1:8000${company.logo}`} alt={company.name} className="w-full h-full object-cover" />
+                          <img src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${company.logo}`} alt={company.name} className="w-full h-full object-cover" />
                         </div>
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex-shrink-0 border border-slate-200 dark:border-slate-700 flex items-center justify-center font-bold text-slate-500 uppercase">

@@ -46,7 +46,7 @@ export const Sidebar = ({ children, isCollapsed, setIsCollapsed }: SidebarProps)
           {company?.logo ? (
             <div className="w-9 h-9 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm bg-white">
               <img
-                src={`http://127.0.0.1:8000${company.logo}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${company.logo}`}
                 alt={company.name}
                 className="w-full h-full object-contain"
               />
@@ -95,7 +95,7 @@ export const Sidebar = ({ children, isCollapsed, setIsCollapsed }: SidebarProps)
           {company?.logo ? (
             <div className={`rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm bg-white transition-all duration-300 flex-shrink-0 ${isCollapsed ? "w-10 h-10" : "w-14 h-14"}`}>
               <img
-                src={`http://127.0.0.1:8000${company.logo}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${company.logo}`}
                 alt={company.name}
                 className="w-full h-full object-contain p-1"
               />

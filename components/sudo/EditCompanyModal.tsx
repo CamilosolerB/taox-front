@@ -90,7 +90,7 @@ export default function EditCompanyModal({ isOpen, onClose, company }: EditCompa
             {logoFile ? (
               <img src={URL.createObjectURL(logoFile)} alt="Preview" className="w-full h-full object-cover" />
             ) : form.logo ? (
-              <img src={`http://127.0.0.1:8000${form.logo}`} alt="Logo" className="w-full h-full object-cover" />
+              <img src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${form.logo}`} alt="Logo" className="w-full h-full object-cover" />
             ) : (
               <Building2 className="w-6 h-6 text-slate-400" />
             )}
