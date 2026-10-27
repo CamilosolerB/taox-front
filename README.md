@@ -59,16 +59,6 @@ Para configurar y ejecutar el proyecto localmente, sigue los siguientes pasos:
 
     La aplicación estará disponible en `http://localhost:3000`.
 
-## Uso
-
-(Aquí se pueden añadir capturas de pantalla o descripciones de las principales funcionalidades de la interfaz de usuario.)
-
-## Aprende Más
-
-Para aprender más sobre Next.js, consulta los siguientes recursos:
-
-- [Next.js Documentation](https://nextjs.org/docs) - aprende sobre las características y la API de Next.js.
-- [Learn Next.js](https://nextjs.org/learn) - un tutorial interactivo de Next.js.
 
 También puedes consultar [el repositorio de Next.js en GitHub](https://github.com/vercel/next.js) - ¡tus comentarios y contribuciones son bienvenidos!
 
