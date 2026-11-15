@@ -21,6 +21,7 @@ export { useChemicalStock } from "./useChemicalStock";
 export { useChemicalStocks } from "./useChemicalStocks";
 export { useProcesses } from "./useProcesses";
 export { useCompanies } from "./useCompanies";
+export { useCopilot } from "./useCopilot";
 
 export { useAuth } from "@/providers/AuthProvider";
 export { useInventoryStore } from "@/providers/InventoryProvider";

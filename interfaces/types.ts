@@ -178,6 +178,94 @@ export interface ProcessUpdateDTO {
   is_active?: boolean | null;
 }
 
+// Copilot (chat interno + Telegram)
+export interface CopilotMessageRequest {
+  contenido: string;
+  conversation_id?: string | null;
+  alerta_id?: number | null;
+  codigo_producto?: string | null;
+}
+
+export interface OpenConversationDTO {
+  alerta_id?: number | null;
+  codigo_producto?: string | null;
+  titulo?: string | null;
+}
+
+export interface CopilotMessageDTO {
+  id_mensaje: number;
+  rol: string;
+  contenido: string;
+  canal?: string | null;
+  proveedor?: string | null;
+  modelo?: string | null;
+  created_at: string;
+}
+
+export interface CopilotConversationDTO {
+  id_conversation: string;
+  canal: string;
+  canal_chat_id?: string | null;
+  alerta_id?: number | null;
+  codigo_producto?: string | null;
+  titulo?: string | null;
+  estado: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReplenishmentDraftDTO {
+  id_borrador: number;
+  alerta_id?: number | null;
+  codigo_producto: string;
+  cantidad_sugerida?: number | null;
+  unidad_medida?: string | null;
+  proveedor_sugerido?: string | null;
+  notas?: string | null;
+  estado: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReplenishmentDraftCreateDTO {
+  codigo_producto: string;
+  alerta_id?: number | null;
+  conversation_id?: string | null;
+  cantidad_sugerida?: number | null;
+  unidad_medida?: string | null;
+  proveedor_sugerido?: string | null;
+  notas?: string | null;
+}
+
+export interface ReplenishmentDraftUpdateDTO {
+  cantidad_sugerida?: number | null;
+  unidad_medida?: string | null;
+  proveedor_sugerido?: string | null;
+  notas?: string | null;
+  estado?: string | null;
+}
+
+export interface CopilotReplyDTO {
+  reply: string;
+  provider: string;
+  model: string;
+  conversation_id: string;
+  replenishment_draft?: ReplenishmentDraftDTO | null;
+}
+
+export interface TelegramLinkStartDTO {
+  code: string;
+  expires_at: string;
+  bot_link?: string | null;
+  instructions: string;
+}
+
+export interface TelegramLinkStatusDTO {
+  linked: boolean;
+  chat_id?: number | null;
+  telegram_username?: string | null;
+}
+
 // Legacy types (keep for backward compatibility)
 export interface Movement {
   id: string;

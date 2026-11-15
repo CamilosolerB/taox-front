@@ -8,3 +8,4 @@ export * from "./locations";
 export * from "./stock";
 export * from "./clients";
 export * from "./productProviders";
+export * from "./copilot";

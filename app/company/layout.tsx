@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/components/adminInventory/headers/Navbar";
 import { Sidebar } from "@/components/adminInventory/utils";
+import { CopilotWidget } from "@/components/adminInventory/copilot";
 
 export default function CompanyLayout({
   children,
@@ -17,6 +18,7 @@ export default function CompanyLayout({
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}>
         {children}
       </Sidebar>
+      <CopilotWidget />
     </div>
   );
 }

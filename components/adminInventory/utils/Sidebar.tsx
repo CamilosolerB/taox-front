@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   Archive,
+  Bot,
   History,
   LayoutDashboard,
   MapPin,
@@ -140,6 +141,10 @@ export const Sidebar = ({ children, isCollapsed, setIsCollapsed }: SidebarProps)
           <a className={getLinkClass("/company/movements")} href="/company/movements" title={isCollapsed ? "Movimientos" : ""}>
             <History className="w-5 h-5 flex-shrink-0" />
             {!isCollapsed && <span>Movimientos</span>}
+          </a>
+          <a className={getLinkClass("/company/assistant")} href="/company/assistant" title={isCollapsed ? "Asistente IA" : ""}>
+            <Bot className="w-5 h-5 flex-shrink-0" />
+            {!isCollapsed && <span>Asistente IA</span>}
           </a>
 
           {!isCollapsed && (
