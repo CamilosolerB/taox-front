@@ -7,8 +7,35 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 function resolveHref(href?: string) {
   if (!href) return href;
+  const legacyReportPath = "/static/uploads/reports/";
+  const reportPath = "/copilot/reports/";
+
+  if (href.startsWith(reportPath)) return `${API_BASE}${href}`;
+  if (href.startsWith(legacyReportPath)) {
+    return `${API_BASE}${reportPath}${href.slice(legacyReportPath.length)}`;
+  }
+
+  try {
+    const url = new URL(href);
+    if (url.pathname.startsWith(legacyReportPath)) {
+      url.pathname = `${reportPath}${url.pathname.slice(legacyReportPath.length)}`;
+      return url.toString();
+    }
+  } catch {
+    // Leave non-URL Markdown links untouched.
+  }
+
   if (href.startsWith("/static")) return `${API_BASE}${href}`;
   return href;
+}
+
+function isReportDownload(href?: string) {
+  if (!href) return false;
+  try {
+    return new URL(resolveHref(href) || href, API_BASE).pathname.startsWith("/copilot/reports/");
+  } catch {
+    return false;
+  }
 }
 
 const components: Components = {
@@ -27,16 +54,19 @@ const components: Components = {
   ),
   strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,
-  a: ({ href, children }) => (
-    <a
-      href={resolveHref(href)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-primary font-medium underline underline-offset-2 break-all"
-    >
-      {children}
-    </a>
-  ),
+  a: ({ href, children }) => {
+    const download = isReportDownload(href);
+    return (
+      <a
+        href={resolveHref(href)}
+        target={download ? undefined : "_blank"}
+        rel={download ? undefined : "noopener noreferrer"}
+        className="text-primary font-medium underline underline-offset-2 break-all"
+      >
+        {children}
+      </a>
+    );
+  },
   code: ({ children }) => (
     <code className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-700/70 text-[0.8em]">
       {children}
