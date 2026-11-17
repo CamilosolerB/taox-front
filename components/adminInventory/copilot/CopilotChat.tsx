@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Bot, Loader2, Send, User as UserIcon } from "lucide-react";
 import { useAuth, useCopilot } from "@/hooks";
 import type { CopilotMessageDTO, ReplenishmentDraftDTO } from "@/interfaces/types";
+import { MarkdownMessage } from "./MarkdownMessage";
 
 interface CopilotChatProps {
   conversationId?: string | null;
@@ -104,7 +105,8 @@ export function CopilotChat({
             <Bot className="w-10 h-10 mx-auto mb-3 opacity-50" />
             <p className="font-medium">Soy el copiloto de TAOX.</p>
             <p className="mt-1">
-              Pregúntame por las alertas de stock o pídeme preparar una reposición.
+              Pregúntame por las alertas de stock, pídeme preparar una reposición o generar un
+              reporte.
             </p>
           </div>
         )}
@@ -124,13 +126,13 @@ export function CopilotChat({
                 {isUser ? <UserIcon size={16} /> : <Bot size={16} />}
               </div>
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap break-words ${
+                className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm break-words ${
                   isUser
-                    ? "bg-primary text-white rounded-tr-sm"
+                    ? "bg-primary text-white rounded-tr-sm whitespace-pre-wrap"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-sm"
                 }`}
               >
-                {message.contenido}
+                {isUser ? message.contenido : <MarkdownMessage content={message.contenido} />}
               </div>
             </div>
           );
